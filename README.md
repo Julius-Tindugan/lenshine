@@ -24,10 +24,8 @@ In progress
 
 ### High-Fidelity Wireframes
 
-**Sign-in and Sign-up Flow**  
-
-**Main User Flow (Booking, Profile, etc.)** 
-![User Flow](https://storage.googleapis.com/maker-media-tool-store/a5b4c10c-3bb1-4475-ae90-7d721111d4e0)
+**User Flow (Authentication, Booking, Profile, etc.)** 
+![User Flow](https://www.figma.com/design/D8kCVGI6u14ynVBOaDQQsY/LENSHINE?node-id=567-123&t=GTMdBHGHEXuVDuLo-1)
 
 ## 🛠️ Technologies Used
 
@@ -54,7 +52,7 @@ Make sure you have the following installed on your machine:
 * A **Firebase account** for authentication services.  
 
 ### Setup and Installation
-
+## Method 1
 1.  **Clone the Repository**
     ```sh
     git clone [https://github.com/Julius-Tindugan/lenshine.git](https://github.com/Julius-Tindugan/lenshine.git)
@@ -84,8 +82,10 @@ Make sure you have the following installed on your machine:
         ```sh
         flutter run
         ```
+## Method 2
+Download the apk-release on our gdrive [Here is the link](https://drive.google.com/drive/folders/11tCbQTv8Mmh9GT7TjpUh3ow1qJC0lDF-?usp=sharing)
 
-## 📂 Project Structure
+### 📂 Project Structure
 
 The source code is organized into a logical directory structure to maintain clarity and scalability.  
 
