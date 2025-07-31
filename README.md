@@ -102,7 +102,7 @@ Make sure you have the following installed on your machine:
 
 - **Download the app package.**
 
-- **Unfortunately, the server and database will expire its free trial until August 30, 2025 so don't miss out to try our app, so the app will not be available.**
+- ***Unfortunately, the server and database will expire its free trial until August 30, 2025 so don't miss out to try our app.***
 
 ### 📂 Project Structure
 
