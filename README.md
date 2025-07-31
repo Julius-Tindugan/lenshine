@@ -19,8 +19,6 @@ The application comes packed with features to ensure a seamless user experience 
 * **User Profile Management**: Users can view and manage their profile information.
 * **Integrated Chatbot**: An "ASKLenShine" feature provides users with instant support and answers to frequently asked questions.  
 
-## 🧐 Overview  
-In progress
 
 ### High-Fidelity Wireframes
 
@@ -28,7 +26,23 @@ In progress
 [User Flow Figma Design](https://www.figma.com/design/D8kCVGI6u14ynVBOaDQQsY/LENSHINE?node-id=567-123&t=GTMdBHGHEXuVDuLo-1)
 
 ## 🛠️ Technologies Used
+This project was built using a combination of modern mobile development technologies:
 
+* **Framework**: [Flutter](https://flutter.dev/) 
+* **Programming Language**: [Dart](https://dart.dev/) 
+* **Backend as a Service (BaaS)**: [Firebase](https://firebase.google.com/)
+    * **Firebase Authentication** for user management. 
+    * **Firebase Core** for connecting the app to the Firebase project. 
+* **Database**:
+    * **MySQL** managed via **XAMPP** for the custom backend. 
+* **APIs**:
+    * Custom **REST API** for fetching package data, managing user profiles, and handling bookings.
+    * **reCAPTCHA Enterprise** for bot protection and enhanced security. 
+* **State Management**: Stateful widget architecture with `SharedPreferences` for session persistence. 
+* **Development Tools**:
+    * **Visual Studio Code** 
+    * **Android Studio** (for emulators) 
+    * **Git** for version control.
 ## ✨ Features
 - **Authentication:** Email/password sign-up, login, and password reset via Firebase Auth   
 - **ReCAPTCHA Security:** Bot protection with reCAPTCHA Enterprise   
