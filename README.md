@@ -25,14 +25,13 @@
 ---
 
 ## 🧐 Overview  
-LenShine is a cross-platform Flutter app that streamlines photography studio bookings, removing manual scheduling inefficiencies and centralizing all operations in one intuitive interface :contentReference[oaicite:9]{index=9}.  
+In progress
 
 ---
 
-## 🎥 Demo  
-> _Add a GIF or screenshot of your app in action here_  
+## 🎥 Demo   
 > For an interactive prototype, visit:  
-> [Figma Prototype](https://www.figma.com/design/D8kCVGI6u14ynVBOaDQQsY/LENSHINE?node-id=567-123) :contentReference[oaicite:10]{index=10}
+> [Figma Prototype](https://www.figma.com/design/D8kCVGI6u14ynVBOaDQQsY/LENSHINE?node-id=567-123&t=GTMdBHGHEXuVDuLo-1) :contentReference[oaicite:10]{index=10}
 
 ---
 
