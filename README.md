@@ -96,8 +96,9 @@ Make sure you have the following installed on your machine:
 ## Method #2
 
 *Download the apk-release on our gdrive [Here is the link](https://drive.google.com/drive/folders/11tCbQTv8Mmh9GT7TjpUh3ow1qJC0lDF-?usp=sharing)*
-*We used (https://render.com/) for free to host our server online in cloud so that we can operate the app without using xampp localhost.*
-*We also used (https://railway.com/) for free hosting of our mysql database in cloud.*
+
+- *We used (https://render.com/) for free to host our server online in cloud so that we can operate the app without using xampp localhost.*
+- *We also used (https://railway.com/) for free hosting of our mysql database in cloud.*
 
 - **Download the app package.**
 
