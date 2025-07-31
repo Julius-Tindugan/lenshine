@@ -30,23 +30,28 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  google_maps_flutter: ^2.7.0
+  google_maps_flutter: 2.5.3
   cupertino_icons: ^1.0.8
   http: ^1.2.1
-  geolocator: ^12.0.0
+  geolocator: ^14.0.2
   image_picker: ^1.1.2
-  intl: ^0.19.0
+  intl: ^0.20.2
   url_launcher: ^6.3.0
-  
-  # For picking images from the gallery
-  
-  # For date and time formatting
- 
+  shared_preferences: ^2.2.2
+  firebase_core: ^3.15.2
+  firebase_auth: ^5.7.0
+  recaptcha_enterprise_flutter: ^18.7.1
+  auto_size_text: ^3.0.0
+  flutter_markdown: ^0.6.18
+  table_calendar: ^3.1.1
+  permission_handler: ^11.3.1
+
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  flutter_launcher_icons: ^0.13.1
-  flutter_lints: ^5.0.0
+  flutter_launcher_icons: ^0.14.4
+  flutter_lints: ^6.0.0
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is
   # activated in the `analysis_options.yaml` file located at the root of your
@@ -70,6 +75,18 @@ flutter:
   uses-material-design: true
   assets:
     - assets/images/
+  
+    
+  fonts:
+    - family: Montserrat
+      fonts:
+        - asset: assets/fonts/Montserrat-Regular.ttf
+        - asset: assets/fonts/Montserrat-Bold.ttf
+          weight: 700
+        - asset: assets/fonts/Montserrat-SemiBold.ttf
+          weight: 600
+        - asset: assets/fonts/Montserrat-Italic.ttf
+          style: italic
   # To add assets to your application, add an assets section, like this:
   # assets:
   #   - images/a_dot_burr.jpeg

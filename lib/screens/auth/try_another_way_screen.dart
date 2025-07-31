@@ -3,7 +3,15 @@ import 'package:flutter/material.dart'; // <-- Add this import
 class TryAnotherWayScreen extends StatefulWidget {
   final VoidCallback onBack;
   final Function(int) onContinue; // 0=SMS, 1=Email, 2=Password
-  const TryAnotherWayScreen({super.key, required this.onBack, required this.onContinue});
+  final String maskedPhone;
+  final String maskedEmail;
+  const TryAnotherWayScreen({
+    super.key,
+    required this.onBack,
+    required this.onContinue,
+    required this.maskedPhone,
+    required this.maskedEmail,
+  });
 
   @override
   State<TryAnotherWayScreen> createState() => _TryAnotherWayScreenState();
@@ -45,14 +53,14 @@ class _TryAnotherWayScreenState extends State<TryAnotherWayScreen> {
                 index: 0,
                 icon: Icons.phone,
                 title: "Send code via SMS",
-                subtitle: "09******90",
+                subtitle: widget.maskedPhone,
               ),
               const SizedBox(height: 8),
               _buildOptionCard(
                 index: 1,
                 icon: Icons.email,
                 title: "Send code via Email",
-                subtitle: "k*****i@gmail.com",
+                subtitle: widget.maskedEmail,
               ),
               const SizedBox(height: 8),
               _buildOptionCard(

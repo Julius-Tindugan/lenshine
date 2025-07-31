@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 
 class LandingScreen extends StatelessWidget {
-  const LandingScreen({super.key});
+  final String? userName; // <-- Add this
+
+  const LandingScreen({super.key, this.userName});
 
   @override
   Widget build(BuildContext context) {
@@ -12,7 +14,7 @@ class LandingScreen extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Image.asset(
-              'assets/images/shinelogo.png', // Corrected path
+              'assets/images/shinelogo.png',
               width: 250,
               height: 150,
             ),
@@ -20,6 +22,10 @@ class LandingScreen extends StatelessWidget {
             const CircularProgressIndicator(
               color: Colors.black,
             ),
+            if (userName != null) ...[
+              const SizedBox(height: 16),
+              Text("Welcome, $userName!", style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+            ]
           ],
         ),
       ),

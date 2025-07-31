@@ -1,17 +1,20 @@
+
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
-
+import 'package:permission_handler/permission_handler.dart'; 
 
 class PaymentScreen extends StatefulWidget {
   final String amount;
+  final String gcashName; 
   final VoidCallback onBack;
-  final VoidCallback onConfirm;
+  final Function(File?) onConfirm;
   
   const PaymentScreen({
-    super.key, 
-    required this.amount, 
-    required this.onBack, 
+    super.key,
+    required this.amount,
+    required this.gcashName, 
+    required this.onBack,
     required this.onConfirm
   });
 
@@ -23,13 +26,27 @@ class PaymentScreenState extends State<PaymentScreen> {
   File? _proofImageFile;
 
   Future<void> _pickImage() async {
-    final picker = ImagePicker();
-    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
+    // MODIFIED: Changed Permission.storage to Permission.photos
+    // This is the modern, recommended permission for accessing the photo gallery.
+    // It automatically falls back to storage permission on older Android versions.
+    final status = await Permission.photos.request(); 
 
-    if (pickedFile != null) {
-      setState(() {
-        _proofImageFile = File(pickedFile.path);
-      });
+    if (status.isGranted) {
+      final picker = ImagePicker();
+      final pickedFile = await picker.pickImage(source: ImageSource.gallery);
+
+      if (pickedFile != null) {
+        setState(() {
+          _proofImageFile = File(pickedFile.path);
+        });
+      }
+    } else {
+      // This SnackBar is shown if permission is denied
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Photo library permission is required to upload an image.'))
+        );
+      }
     }
   }
 
@@ -67,13 +84,13 @@ class PaymentScreenState extends State<PaymentScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Padding(
-                    padding: EdgeInsets.all(16.0),
+                  Padding(
+                    padding: const EdgeInsets.all(16.0),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text("GCash Name", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: Colors.grey)),
-                        Text("L******E S.", style: TextStyle(fontSize: 18)),
+                        const Text("GCash Name", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: Colors.grey)),
+                        Text(widget.gcashName, style: const TextStyle(fontSize: 18)),
                       ],
                     ),
                   ),
@@ -86,7 +103,7 @@ class PaymentScreenState extends State<PaymentScreen> {
                         const Text("Upload Payment of Proof", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
                         const SizedBox(height: 8),
                         GestureDetector(
-                          onTap: _pickImage,
+                          onTap: _pickImage, // This calls the method that requests permission
                           child: Container(
                             height: 100,
                             width: double.infinity,
@@ -121,7 +138,7 @@ class PaymentScreenState extends State<PaymentScreen> {
               width: double.infinity,
               height: 56,
               child: ElevatedButton(
-                onPressed: widget.onConfirm,
+                onPressed: () => widget.onConfirm(_proofImageFile),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.black,
                   foregroundColor: Colors.white,

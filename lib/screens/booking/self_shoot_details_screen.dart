@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:lenshine/models/package_item.dart';
 
-
-
-
 class SelfShootDetailsScreen extends StatefulWidget {
+  final List<PackageItem> packages; // <-- Accept packages from parent
   final VoidCallback onBack;
   final Function(PackageItem, String) onBookNow;
-  const SelfShootDetailsScreen({super.key, required this.onBack, required this.onBookNow});
+  const SelfShootDetailsScreen({
+    super.key,
+    required this.packages,
+    required this.onBack,
+    required this.onBookNow,
+  });
 
   @override
   SelfShootDetailsScreenState createState() => SelfShootDetailsScreenState();
@@ -30,23 +33,15 @@ class SelfShootDetailsScreenState extends State<SelfShootDetailsScreen> {
     return _PackageGridPage(
       pageTitle: "SELF-SHOOT",
       headerImage: 'assets/images/selftwo.png',
-      packages: _selfShootPackages,
+      packages: widget.packages, // <-- Use dynamic packages
       onBack: widget.onBack,
       onPackageSelected: (pkg) => setState(() => _selectedPackage = pkg),
+      
     );
+    
   }
 }
-const _selfShootPackages = [
-  PackageItem(title: "Solo Package", price: "PHP 399", imageAsset: 'assets/images/solo.png', inclusions: ["20 mins shoot", "Unlimited Shots", "1 Backdrop", "10 mins Photo Selection"], freeItems: ["ALL soft copies", "1 4r size print"]),
-  PackageItem(title: "Kids Package", price: "PHP 499", imageAsset: 'assets/images/kid.png', inclusions: ["Kids up to 7 years old", "One Backdrop", "10 Mins Photo Selection", "2pc Single 4R or 2pc Collage 4R"], freeItems: ["ALL Soft Copies", "Two 4R Size Print", "Number Balloon"]),
-  PackageItem(title: "Graduation Package", price: "PHP 499", imageAsset: 'assets/images/grad.jpg', inclusions: ["Solo Package", "1 Backdrop", "1 A4 Size Print", "1 4R Size Print", "4 Wallet Size Print"], freeItems: ["ALL Soft Copies", "Hard Copies"]),
-  PackageItem(title: "Duo Package", price: "PHP 599", imageAsset: 'assets/images/duo.jpg', inclusions: ["2 Persons", "20 Minutes", "Unlimited shots", "One Backdrop", "10 Mins Photo Selection"], freeItems: ["ALL Soft Copies", "Two 4R Size Print"]),
-  PackageItem(title: "Barkada Package", price: "PHP 799", imageAsset: 'assets/images/group.jpg', inclusions: ["3-4 Persons", "20 Minutes", "Unlimited Slots", "One Backdrop", "10 Mins Photo Selection"], freeItems: ["ALL Soft Copies", "Four 4R Size Print"]),
-  PackageItem(title: "Fam One Package", price: "PHP 799", imageAsset: 'assets/images/family.jpg', inclusions: ["3-4 Persons", "20 Minutes", "Unlimited Slots", "One Backdrop", "10 Mins Photo Selection"], freeItems: ["ALL Soft Copies", "Two 4R Size Print", "One A4 Size Print"]),
-  PackageItem(title: "Fam Two Package", price: "PHP 999", imageAsset: 'assets/images/famtwo.png', inclusions: ["5-6 Persons", "20 Minutes", "Unlimited Slots", "Two Backdrop", "10 Mins Photo Selection"], freeItems: ["ALL Soft Copies", "Two 4R Size Print", "One A4 Size Print"]),
-  PackageItem(title: "Fam Three Package", price: "PHP 1199", imageAsset: 'assets/images/famthree.png', inclusions: ["7-9 Persons", "20 Minutes", "Unlimited Slots", "Two Backdrop", "10 Mins Photo Selection"], freeItems: ["ALL Soft Copies", "Four 4R Size Print", "Two A4 Size Print"]),
-  PackageItem(title: "Fam Four Package", price: "PHP 2199", imageAsset: 'assets/images/famfour.png', inclusions: ["10-15 Persons", "40 Minutes", "Unlimited Slots", "Two Backdrop", "10 Mins Photo Selection"], freeItems: ["ALL Soft Copies", "Four 4R Size Print", "Two A4 Size Print"]),
-];
+
 class _PackageGridPage extends StatelessWidget {
   final String pageTitle;
   final String headerImage;
@@ -118,36 +113,44 @@ class _PackageGridPage extends StatelessWidget {
                 childAspectRatio: 1 / 1.35,
               ),
               delegate: SliverChildBuilderDelegate(
-                (context, index) {
-                  final pkg = packages[index];
-                  return GestureDetector(
-                    onTap: () => onPackageSelected(pkg),
-                    child: Card(
-  clipBehavior: Clip.antiAlias,
-  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-  child: Column(
-    crossAxisAlignment: CrossAxisAlignment.start,
-    mainAxisSize: MainAxisSize.min,
-    children: [
-      Flexible(
-        child: Image.asset(pkg.imageAsset, width: double.infinity, fit: BoxFit.cover),
-      ),
-      const SizedBox(height: 10),
-      Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 8.0),
-        child: Text(pkg.title, style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 18)),
-      ),
-      Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 8.0),
-        child: Text(pkg.price, style: const TextStyle(color: Colors.grey, fontSize: 15)),
-      ),
-    ],
+  (context, index) {
+    final pkg = packages[index];
+    return GestureDetector(
+      onTap: () => onPackageSelected(pkg),
+      child: Card(
+        clipBehavior: Clip.antiAlias,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Flexible(
+  child: Image.asset(
+    pkg.imageAsset,
+    width: double.infinity,
+    fit: BoxFit.cover,
+    errorBuilder: (context, error, stackTrace) => Container(
+      color: Colors.grey[300],
+      child: const Center(child: Icon(Icons.broken_image, size: 48)),
+    ),
   ),
 ),
-                  );
-                },
-                childCount: packages.length,
-              ),
+            const SizedBox(height: 10),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8.0),
+              child: Text(pkg.title, style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 18)),
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8.0),
+              child: Text(pkg.formattedPrice, style: const TextStyle(color: Colors.grey, fontSize: 15)), // <-- FIXED
+            ),
+          ],
+        ),
+      ),
+    );
+  },
+  childCount: packages.length,
+),
             ),
           ),
           const SliverToBoxAdapter(child: SizedBox(height: 20)),
@@ -156,7 +159,6 @@ class _PackageGridPage extends StatelessWidget {
     );
   }
 }
-
 
 class PackageDetailPage extends StatelessWidget {
   final PackageItem pkg;
@@ -211,7 +213,7 @@ class PackageDetailPage extends StatelessWidget {
                       ),
                       const SizedBox(height: 8),
                       Text(pkg.title, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 22)),
-                      Text(pkg.price, style: const TextStyle(color: Colors.grey, fontSize: 18)),
+                      Text(pkg.formattedPrice, style: const TextStyle(color: Colors.grey, fontSize: 18)), // <-- FIXED
                       const Divider(height: 24),
                       const Text("Inclusions:", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 17, color: Colors.grey)),
                       ...pkg.inclusions.map((item) => Text(item, style: const TextStyle(fontSize: 18))),

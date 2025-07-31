@@ -1,11 +1,26 @@
 import 'package:flutter/material.dart';
 
+// Add imports
+import 'package:lenshine/models/package_item.dart';
+import 'package:auto_size_text/auto_size_text.dart';
+import 'package:lenshine/widgets/common_dialogs.dart';
+
+const Map<String, String> serviceImages = {
+  "Self-Shoot": "assets/images/selfshoot.png",
+  "Party": "assets/images/party.png",
+  "Wedding": "assets/images/wedding.png",
+  "Christening": "assets/images/christening_placeholder.png",
+};
+
+
 class HomeLandingScreen extends StatefulWidget {
   final VoidCallback onShowSelfShootDetails;
   final VoidCallback onShowPartyDetails;
   final VoidCallback onShowWeddingDetails;
   final VoidCallback onShowChristeningDetails;
   final VoidCallback onLogout;
+  final String userName;
+  final List<PackageItem> packages;
 
   const HomeLandingScreen({
     super.key,
@@ -14,6 +29,8 @@ class HomeLandingScreen extends StatefulWidget {
     required this.onShowWeddingDetails,
     required this.onShowChristeningDetails,
     required this.onLogout,
+    required this.userName,
+    required this.packages,
   });
 
   @override
@@ -21,36 +38,29 @@ class HomeLandingScreen extends StatefulWidget {
 }
 
 class _HomeLandingScreenState extends State<HomeLandingScreen> {
-  String selectedService = "All";
+   String selectedService = "All";
 
-  final Map<String, String> serviceImages = {
-    "Self-Shoot": 'assets/images/selftwo.png',
-    "Party": 'assets/images/partytwo.png',
-    "Wedding": 'assets/images/weddingtwo.png',
-    "Christening": 'assets/images/christeningtwo.png',
-  };
-
-  final List<String> services = [
-    "All", "Self-Shoot", "Party", "Wedding", "Christening"
-  ];
 
   @override
   Widget build(BuildContext context) {
+    final media = MediaQuery.of(context);
+    final width = media.size.width;
+    final height = media.size.height;
     // Filtered list: if "All" is selected, show all, else show selected first
     List<String> filteredPopularServices = (selectedService == "All")
         ? serviceImages.keys.toList()
         : [selectedService, ...serviceImages.keys.where((s) => s != selectedService)];
 
-    return Scaffold(
-      backgroundColor: Colors.white,
-      body: SafeArea(
-        child: SingleChildScrollView(
+    return SafeArea(
+      child: Scaffold(
+        backgroundColor: Colors.white,
+        body: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // Header
               Padding(
-                padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
+                padding: EdgeInsets.fromLTRB(width * 0.05, height * 0.025, width * 0.05, 0),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -59,144 +69,251 @@ class _HomeLandingScreenState extends State<HomeLandingScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         RichText(
-                          text: const TextSpan(
-                            style: TextStyle(fontSize: 28, color: Colors.black),
+                          text: TextSpan(
+                            style: TextStyle(fontSize: width * 0.075, color: Colors.black, fontWeight: FontWeight.w700, letterSpacing: 0.2),
                             children: [
-                              TextSpan(text: "Hey, "),
+                              const TextSpan(text: "Hey, "),
                               TextSpan(
-                                text: "Kristine!",
-                                style: TextStyle(fontWeight: FontWeight.w800),
+                                text: widget.userName.isNotEmpty ? "${widget.userName.split(' ')[0]}!" : "Guest!",
+                                style: const TextStyle(fontWeight: FontWeight.w900, color: Colors.black),
                               ),
                             ],
                           ),
                         ),
-                        const SizedBox(height: 5),
-                        Container(height: 3, width: 62, color: Colors.grey[300]),
-                        const SizedBox(height: 8),
-                        const Text(
+                        SizedBox(height: height * 0.006),
+                        Container(height: 3, width: width * 0.18, color: Colors.grey[300]),
+                        SizedBox(height: height * 0.01),
+                        AutoSizeText(
                           "What moments \nare we capturing today?",
-                          style: TextStyle(fontSize: 20, color: Colors.black54),
+                          style: TextStyle(fontSize: width * 0.05, color: Colors.black54, fontWeight: FontWeight.w500),
+                          maxLines: 2,
                         ),
                       ],
                     ),
-                    PopupMenuButton<String>(
-                      onSelected: (value) {
-                        if (value == 'Logout') widget.onLogout();
+                    IconButton(
+                      onPressed: () {
+                        showDialog(
+                          context: context,
+                          builder: (context) => LogoutDialog(
+                            onConfirm: () {
+                              Navigator.of(context).pop();
+                              widget.onLogout();
+                            },
+                            onCancel: () => Navigator.of(context).pop(),
+                          ),
+                        );
                       },
-                      itemBuilder: (context) => [
-                        const PopupMenuItem<String>(
-                          value: 'Logout',
-                          child: Text('Logout'),
-                        ),
-                      ],
-                      icon: const Icon(Icons.more_vert),
+                      icon: const Icon(Icons.logout_rounded),
+                      tooltip: 'Logout',
+                      iconSize: 28,
+                      color: Colors.black,
                     ),
                   ],
                 ),
               ),
-              const SizedBox(height: 20),
-              // Explore our Services
+              SizedBox(height: height * 0.025),
+              // Hero Banner
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                child: Card(
-                  elevation: 5.0,
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-                  child: Padding(
-                    padding: const EdgeInsets.all(15.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                padding: EdgeInsets.symmetric(horizontal: width * 0.05),
+                child: ConstrainedBox(
+                  constraints: BoxConstraints(minHeight: height * 0.14, maxHeight: height * 0.22),
+                  child: Container(
+                    height: height * 0.16,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(28),
+                      gradient: LinearGradient(
+                        colors: [Colors.black, Colors.black.withOpacity(0.8)],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                      ),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.08),
+                          blurRadius: 18,
+                          offset: const Offset(0, 8),
+                        ),
+                      ],
+                    ),
+                    child: Row(
                       children: [
-                        const Text("Explore our Services", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 19)),
-                        const SizedBox(height: 8),
-                        ExploreServicesSection(
-                          selectedService: selectedService,
-                          onServiceSelected: (service) {
-                            setState(() => selectedService = service);
-                           
-                          },
+                        Expanded(
+                          child: Padding(
+                            padding: EdgeInsets.all(width * 0.045),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Flexible(child: AutoSizeText("Capture your best moments!", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 22), maxLines: 2, overflow: TextOverflow.ellipsis)),
+                                SizedBox(height: 8),
+                                Flexible(child: AutoSizeText("Book a session now and enjoy exclusive promos.", style: TextStyle(color: Colors.white70, fontSize: 15), maxLines: 2, overflow: TextOverflow.ellipsis)),
+                              ],
+                            ),
+                          ),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.only(right: width * 0.03),
+                          child: Image.asset('assets/images/selfshoot.png', height: height * 0.11, fit: BoxFit.contain),
                         ),
                       ],
                     ),
                   ),
                 ),
               ),
-              const SizedBox(height: 23),
-              // Popular
-              const Padding(
-                padding: EdgeInsets.symmetric(horizontal: 20.0),
-                child: Text("Popular", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 19)),
-              ),
-              const SizedBox(height: 8),
-              SizedBox(
-                height: 280,
-                child: ListView.builder(
-                  scrollDirection: Axis.horizontal,
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  itemCount: filteredPopularServices.length,
-                  itemBuilder: (context, index) {
-                    final service = filteredPopularServices[index];
-                    return GestureDetector(
-                      onTap: () {
-                        switch (service) {
-                          case "Self-Shoot": widget.onShowSelfShootDetails(); break;
-                          case "Party": widget.onShowPartyDetails(); break;
-                          case "Wedding": widget.onShowWeddingDetails(); break;
-                          case "Christening": widget.onShowChristeningDetails(); break;
-                        }
-                      },
-                      child: Card(
-                        clipBehavior: Clip.antiAlias,
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-                        margin: const EdgeInsets.only(right: 8),
-                        child: SizedBox(
-                          width: 340,
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Image.asset(
-                                serviceImages[service]!,
-                                height: 200,
-                                width: double.infinity,
-                                fit: BoxFit.cover,
-                              ),
-                              const SizedBox(height: 18),
-                              Padding(
-                                padding: const EdgeInsets.symmetric(horizontal: 12.0),
-                                child: Text(service, style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 20)),
-                              ),
-                              const Padding(
-                                padding: EdgeInsets.symmetric(horizontal: 12.0),
-                                child: Text("Package", style: TextStyle(fontSize: 17, color: Colors.grey)),
-                              ),
-                            ],
+              SizedBox(height: height * 0.03),
+              // Explore our Services
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: width * 0.025),
+                child: Card(
+                  elevation: 5.0,
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                  child: Padding(
+                    padding: EdgeInsets.all(width * 0.035),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        AutoSizeText("Explore our Services", style: TextStyle(fontWeight: FontWeight.bold, fontSize: width * 0.048)),
+                        SizedBox(height: height * 0.01),
+                        AnimatedSwitcher(
+                          duration: const Duration(milliseconds: 350),
+                          child: ExploreServicesSection(
+                            key: ValueKey(selectedService),
+                            selectedService: selectedService,
+                            onServiceSelected: (service) {
+                              setState(() => selectedService = service);
+                            },
                           ),
                         ),
-                      ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+              SizedBox(height: height * 0.03),
+              // Popular
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: width * 0.05),
+                child: AutoSizeText("Popular", style: TextStyle(fontWeight: FontWeight.bold, fontSize: width * 0.048)),
+              ),
+              SizedBox(height: height * 0.01),
+              SizedBox(
+                height: height * 0.36,
+                child: LayoutBuilder(
+                  builder: (context, constraints) {
+                    return ListView.builder(
+                      scrollDirection: Axis.horizontal,
+                      padding: EdgeInsets.symmetric(horizontal: width * 0.04),
+                      itemCount: filteredPopularServices.length,
+                      itemBuilder: (context, index) {
+                        final service = filteredPopularServices[index];
+                        return AnimatedContainer(
+                          duration: const Duration(milliseconds: 350),
+                          curve: Curves.easeInOut,
+                          margin: EdgeInsets.only(right: width * 0.03),
+                          child: GestureDetector(
+                            onTap: () {
+                              switch (service) {
+                                case "Self-Shoot":
+                                  widget.onShowSelfShootDetails();
+                                  break;
+                                case "Party":
+                                  widget.onShowPartyDetails();
+                                  break;
+                                case "Wedding":
+                                  widget.onShowWeddingDetails();
+                                  break;
+                                case "Christening":
+                                  widget.onShowChristeningDetails();
+                                  break;
+                              }
+                            },
+                            child: SizedBox(
+                              width: constraints.maxWidth * 0.8,
+                              child: Card(
+                                clipBehavior: Clip.antiAlias,
+                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+                                elevation: 6,
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Flexible(
+                                      flex: 6,
+                                      child: Hero(
+                                        tag: service,
+                                        child: Image.asset(
+                                          serviceImages[service]!,
+                                          height: height * 0.18,
+                                          width: double.infinity,
+                                          fit: BoxFit.cover,
+                                        ),
+                                      ),
+                                    ),
+                                    Flexible(
+                                      flex: 4,
+                                      child: Padding(
+                                        padding: EdgeInsets.symmetric(horizontal: width * 0.03, vertical: height * 0.01),
+                                        child: Column(
+                                          mainAxisSize: MainAxisSize.min,
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          children: [
+                                            AutoSizeText(service, style: TextStyle(fontWeight: FontWeight.w800, fontSize: width * 0.052), maxLines: 1, overflow: TextOverflow.ellipsis),
+                                            SizedBox(height: height * 0.002),
+                                            AutoSizeText("Package", style: TextStyle(fontSize: width * 0.045, color: Colors.grey)),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                        );
+                      },
                     );
                   },
                 ),
               ),
-              const SizedBox(height: 23),
+              SizedBox(height: height * 0.03),
               // Special Promo
-              const Padding(
-                padding: EdgeInsets.symmetric(horizontal: 20.0),
-                child: Text("Special Promo", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 19)),
-              ),
-              const SizedBox(height: 8),
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                child: Card(
-                  clipBehavior: Clip.antiAlias,
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-                  child: Image.asset(
-                    'assets/images/offer.png',
-                    height: 175,
-                    width: double.infinity,
-                    fit: BoxFit.cover,
+                padding: EdgeInsets.symmetric(horizontal: width * 0.05),
+                child: AutoSizeText("Special Promo", style: TextStyle(fontWeight: FontWeight.bold, fontSize: width * 0.048)),
+              ),
+              SizedBox(height: height * 0.01),
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: width * 0.04),
+                child: Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(24),
+                    gradient: LinearGradient(
+                      colors: [Colors.black, Colors.black.withOpacity(0.8)],
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                    ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.10),
+                        blurRadius: 16,
+                        offset: const Offset(0, 8),
+                      ),
+                    ],
+                  ),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(24),
+                    child: Image.asset(
+                      'assets/images/offer.png',
+                      height: height * 0.22,
+                      width: double.infinity,
+                      fit: BoxFit.cover,
+                      color: Colors.white.withOpacity(0.85),
+                      colorBlendMode: BlendMode.modulate,
+                    ),
                   ),
                 ),
               ),
-              const SizedBox(height: 20), // Space before bottom nav bar
+              SizedBox(height: height * 0.025),
             ],
           ),
         ),

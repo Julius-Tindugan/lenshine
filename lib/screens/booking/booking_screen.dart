@@ -2,22 +2,26 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:lenshine/models/package_item.dart';
 import 'package:lenshine/models/booking_details.dart';
-
-
-
+import 'package:table_calendar/table_calendar.dart';
+import 'package:lenshine/models/add_on-item.dart'; // Create this model file
+import 'package:lenshine/services/api_service.dart';
 
 class BookingScreen extends StatefulWidget {
   final PackageItem pkg;
   final String label;
   final VoidCallback onBack;
   final Function(BookingDetails) onBookNow;
-  
+  final int? userId;
+  final Map<String, dynamic>? userProfile;
+
   const BookingScreen({
-    super.key, 
-    required this.pkg, 
-    required this.label, 
-    required this.onBack, 
-    required this.onBookNow
+    super.key,
+    required this.pkg,
+    required this.label,
+    required this.onBack,
+    required this.onBookNow,
+    this.userId,
+    this.userProfile,
   });
 
   @override
@@ -26,6 +30,7 @@ class BookingScreen extends StatefulWidget {
 
 class BookingScreenState extends State<BookingScreen> {
   DateTime _selectedDate = DateTime.now();
+  DateTime _focusedDate = DateTime.now();
   String _selectedTime = "10:00 am";
   int _selectedBackground = 0;
 
@@ -38,55 +43,72 @@ class BookingScreenState extends State<BookingScreen> {
     "Pastel Yellow", "Sky Blue", "Pink", "Beige", "Mint", "Light Yellow", "Black", "Gray"
   ];
 
-  final List<String> _addOns = [
-    "Additional Person - PHP 149", "4R Photo Print - PHP 49", "Plus 1 Backdrop - PHP 49",
-    "Lighting Effect - PHP 99", "32in number Balloon - PHP 49", "5mins Extension - PHP 99",
-    "Charge for Pets - PHP 149", "A4 Photo Print - PHP 100"
-  ];
+  List<AddonItem> _addOns = [];
   late List<bool> _addOnStates;
+  bool _isLoadingAddons = true;
   
-  @override
+ @override
   void initState() {
     super.initState();
-    _addOnStates = List.generate(_addOns.length, (index) => false);
+    // REMOVE this line: _addOnStates = List.generate(_addOns.length, (index) => false);
+    _fetchAddons();
   }
-
-  void _presentDatePicker() {
-    showDatePicker(
-      context: context,
-      initialDate: _selectedDate,
-      firstDate: DateTime.now(),
-      lastDate: DateTime(2101),
-    ).then((pickedDate) {
-      if (pickedDate == null) {
-        return;
+Future<void> _fetchAddons() async {
+    try {
+      final addons = await ApiService.getAddOns();
+      if (mounted) {
+        setState(() {
+          _addOns = addons.map((data) => AddonItem.fromJson(data)).toList();
+          _addOnStates = List.generate(_addOns.length, (index) => false);
+          _isLoadingAddons = false;
+        });
       }
-      setState(() {
-        _selectedDate = pickedDate;
-      });
-    });
-  }
-
-  void _handleBookNow(){
-    final date = DateFormat('MM/dd/yyyy').format(_selectedDate);
-    final backdrop = _backgroundNames[_selectedBackground];
-    final selectedAddOns = <String>[];
-    for (int i = 0; i < _addOns.length; i++){
-      if(_addOnStates[i]){
-        selectedAddOns.add(_addOns[i]);
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          _isLoadingAddons = false;
+        });
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed to load add-ons: $e'))
+        );
       }
     }
-
-    final details = BookingDetails(
-      pkg: widget.pkg,
-      label: widget.label,
-      date: date,
-      time: _selectedTime,
-      backdrop: backdrop,
-      addOns: selectedAddOns,
-    );
-    widget.onBookNow(details);
   }
+  double _calculateTotal() {
+    double total = widget.pkg.price;
+    for (int i = 0; i < _addOns.length; i++) {
+      if (_addOnStates[i]) {
+        // Calculate using the price from the fetched AddonItem object
+        total += _addOns[i].price;
+      }
+    }
+    return total;
+  }
+
+ void _handleBookNow() {
+  final date = DateFormat('MM/dd/yyyy').format(_selectedDate);
+  final backdrop = _backgroundNames[_selectedBackground];
+  
+  // Create a list of the selected AddonItem objects
+  final selectedAddOns = <AddonItem>[];
+  for (int i = 0; i < _addOns.length; i++) {
+    if (_addOnStates[i]) {
+      selectedAddOns.add(_addOns[i]);
+    }
+  }
+
+   final details = BookingDetails(
+    pkg: widget.pkg,
+    label: widget.label,
+    date: date,
+    time: _selectedTime,
+    backdrop: backdrop,
+    addOns: selectedAddOns, // Pass the clean list of objects
+    price: _calculateTotal(),
+    userProfile: widget.userProfile,
+  );
+  widget.onBookNow(details);
+}
 
   @override
   Widget build(BuildContext context) {
@@ -112,37 +134,40 @@ class BookingScreenState extends State<BookingScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Calendar - Simple version, replace with table_calendar for a full view
             Card(
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
               elevation: 2.0,
               child: Padding(
                 padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(DateFormat.yMMMM().format(_selectedDate), style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                        ElevatedButton.icon(
-                          onPressed: _presentDatePicker,
-                          icon: const Icon(Icons.calendar_today),
-                          label: const Text('Change Date'),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.black,
-                            foregroundColor: Colors.white
-                          ),
-                        )
-                      ],
+                child: TableCalendar(
+                  firstDay: DateTime.now(),
+                  lastDay: DateTime(2101),
+                  focusedDay: _focusedDate,
+                  selectedDayPredicate: (day) => isSameDay(_selectedDate, day),
+                  onDaySelected: (selectedDay, focusedDay) {
+                    setState(() {
+                      _selectedDate = selectedDay;
+                      _focusedDate = focusedDay;
+                    });
+                  },
+                  calendarStyle: CalendarStyle(
+                    todayDecoration: BoxDecoration(
+                      color: Colors.grey[300],
+                      shape: BoxShape.circle,
                     ),
-                    const SizedBox(height: 10),
-                     Text("Selected: ${DateFormat.yMMMMd().format(_selectedDate)}", style: const TextStyle(fontSize: 16)),
-                  ],
+                    selectedDecoration: const BoxDecoration(
+                      color: Colors.black,
+                      shape: BoxShape.circle,
+                    ),
+                  ),
+                  headerStyle: const HeaderStyle(
+                    formatButtonVisible: false,
+                    titleCentered: true,
+                  ),
                 ),
               ),
             ),
             const SizedBox(height: 25),
-
             // Time Selection
             const Text("Time", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
             const SizedBox(height: 8),
@@ -151,8 +176,10 @@ class BookingScreenState extends State<BookingScreen> {
               runSpacing: 8.0,
               children: _times.map((time) {
                 final isSelected = _selectedTime == time;
-                return SizedBox(
-                  width: MediaQuery.of(context).size.width / 3.5, // 3 items per row
+                return AnimatedContainer(
+                  duration: const Duration(milliseconds: 250),
+                  curve: Curves.easeInOut,
+                  width: MediaQuery.of(context).size.width / 3.5,
                   height: 48,
                   child: ElevatedButton(
                     onPressed: () => setState(() => _selectedTime = time),
@@ -168,7 +195,6 @@ class BookingScreenState extends State<BookingScreen> {
               }).toList(),
             ),
             const SizedBox(height: 25),
-
             // Background Selection
             const Text("Choose your 1 preferred background", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
             const SizedBox(height: 8),
@@ -183,46 +209,61 @@ class BookingScreenState extends State<BookingScreen> {
               itemCount: _backgrounds.length,
               itemBuilder: (ctx, idx) {
                 bool isSelected = _selectedBackground == idx;
-                return GestureDetector(
-                  onTap: () => setState(() => _selectedBackground = idx),
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: _backgrounds[idx],
-                      borderRadius: BorderRadius.circular(16),
-                      border: isSelected ? Border.all(color: Colors.black, width: 3) : null,
-                    ),
+                return AnimatedContainer(
+                  duration: const Duration(milliseconds: 250),
+                  curve: Curves.easeInOut,
+                  decoration: BoxDecoration(
+                    color: _backgrounds[idx],
+                    borderRadius: BorderRadius.circular(16),
+                    border: isSelected ? Border.all(color: Colors.black, width: 3) : null,
+                    boxShadow: isSelected
+                        ? [BoxShadow(color: Colors.black.withOpacity(0.10), blurRadius: 8, offset: const Offset(0, 4))]
+                        : [],
+                  ),
+                  child: GestureDetector(
+                    onTap: () => setState(() => _selectedBackground = idx),
                   ),
                 );
               },
             ),
-            const SizedBox(height: 14),
-
-            // Add-ons
-            const Text("Adds On", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
-            const SizedBox(height: 8),
-            ...List.generate(_addOns.length, (idx) {
-              return CheckboxListTile(
-                title: RichText(
-                  text: TextSpan(
-                    style: const TextStyle(color: Colors.black, fontSize: 16),
-                    children: [
-                      TextSpan(text: "${_addOns[idx].split(' - ')[0]} - "),
-                      TextSpan(text: _addOns[idx].split(' - ')[1], style: const TextStyle(fontWeight: FontWeight.bold)),
-                    ]
+           const SizedBox(height: 14),
+    const Text("Add Ons", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
+    const SizedBox(height: 8),
+    _isLoadingAddons
+        ? const Center(child: CircularProgressIndicator())
+        : Column(
+            children: List.generate(_addOns.length, (idx) {
+              final addon = _addOns[idx];
+              return AnimatedContainer(
+                duration: const Duration(milliseconds: 250),
+                curve: Curves.easeInOut,
+                child: CheckboxListTile(
+                  title: RichText(
+                    text: TextSpan(
+                      style: const TextStyle(color: Colors.black, fontSize: 16),
+                      children: [
+                        TextSpan(text: "${addon.name} - "),
+                        TextSpan(
+                          text: "PHP ${addon.price.toStringAsFixed(0)}",
+                          style: const TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                      ],
+                    ),
                   ),
+                  value: _addOnStates[idx],
+                  onChanged: (val) => setState(() => _addOnStates[idx] = val!),
+                  controlAffinity: ListTileControlAffinity.leading,
+                  contentPadding: EdgeInsets.zero,
+                  activeColor: Colors.black,
                 ),
-                value: _addOnStates[idx],
-                onChanged: (val) => setState(() => _addOnStates[idx] = val!),
-                controlAffinity: ListTileControlAffinity.leading,
-                contentPadding: EdgeInsets.zero,
-                activeColor: Colors.black,
               );
             }),
-             const SizedBox(height: 80), // For floating button
+          ),
+            const SizedBox(height: 80),
           ],
         ),
       ),
-       persistentFooterButtons: [
+      persistentFooterButtons: [
         Padding(
           padding: const EdgeInsets.all(8.0),
           child: SizedBox(

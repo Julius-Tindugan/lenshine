@@ -1,12 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:lenshine/models/package_item.dart';
 
-
-
 class PartyDetailsScreen extends StatefulWidget {
+  final List<PackageItem> packages; // <-- Accept packages from parent
   final VoidCallback onBack;
   final Function(PackageItem, String) onBookNow;
-  const PartyDetailsScreen({super.key, required this.onBack, required this.onBookNow});
+  const PartyDetailsScreen({
+    super.key,
+    required this.packages,
+    required this.onBack,
+    required this.onBookNow,
+  });
 
   @override
   PartyDetailsScreenState createState() => PartyDetailsScreenState();
@@ -29,17 +33,12 @@ class PartyDetailsScreenState extends State<PartyDetailsScreen> {
     return _PackageGridPage(
       pageTitle: "PARTY",
       headerImage: 'assets/images/partytwo.png',
-      packages: _partyPackages,
+      packages: widget.packages,
       onBack: widget.onBack,
       onPackageSelected: (pkg) => setState(() => _selectedPackage = pkg),
     );
   }
 }
-const _partyPackages = [
-  PackageItem(title: "Kids Party", price: "PHP 9000", imageAsset: 'assets/images/kidsparty.png', inclusions: ["2-3 Hours Photo Coverage", "Pre-Event Photoshoot", "200 - 300+ Soft Copies", "All Copies Enhanced Sent", "Sent Via Google Drive", "Online Gallery Posted"], freeItems: []),
-  PackageItem(title: "Birthday Party", price: "PHP 9000", imageAsset: 'assets/images/birthday.png', inclusions: ["2-3 Hours Photo Coverage", "Pre-Event Photoshoot", "200 - 300+ Soft Copies", "All Copies Enhanced Sent", "Sent Via Google Drive", "Online Gallery Posted"], freeItems: []),
-  PackageItem(title: "Debutant", price: "PHP 12000", imageAsset: 'assets/images/debut.png', inclusions: ["Full Event Coverage", "Pre-Event Photoshoot", "200 - 300+ Soft Copies", "All Copies Enhanced Sent", "Sent Via Google Drive", "Online Gallery Posted"], freeItems: []),
-];
 
 class _PackageGridPage extends StatelessWidget {
   final String pageTitle;
@@ -78,7 +77,10 @@ class _PackageGridPage extends StatelessWidget {
               ),
             ),
             flexibleSpace: FlexibleSpaceBar(
-              background: Image.asset(headerImage, fit: BoxFit.cover),
+              background: Hero(
+                tag: headerImage,
+                child: Image.asset(headerImage, fit: BoxFit.cover),
+              ),
             ),
           ),
           SliverToBoxAdapter(
@@ -114,30 +116,38 @@ class _PackageGridPage extends StatelessWidget {
               delegate: SliverChildBuilderDelegate(
                 (context, index) {
                   final pkg = packages[index];
-                  return GestureDetector(
-                    onTap: () => onPackageSelected(pkg),
-                    child: Card(
-  clipBehavior: Clip.antiAlias,
-  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-  child: Column(
-    crossAxisAlignment: CrossAxisAlignment.start,
-    mainAxisSize: MainAxisSize.min, // Add this line
-    children: [
-      Flexible(
-        child: Image.asset(pkg.imageAsset, width: double.infinity, fit: BoxFit.cover),
-      ),
-      const SizedBox(height: 10), // You can reduce this if needed
-      Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 8.0),
-        child: Text(pkg.title, style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 18)),
-      ),
-      Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 8.0),
-        child: Text(pkg.price, style: const TextStyle(color: Colors.grey, fontSize: 15)),
-      ),
-    ],
-  ),
-),
+                  return AnimatedContainer(
+                    duration: const Duration(milliseconds: 350),
+                    curve: Curves.easeInOut,
+                    child: GestureDetector(
+                      onTap: () => onPackageSelected(pkg),
+                      child: Card(
+                        clipBehavior: Clip.antiAlias,
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                        elevation: 6,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Flexible(
+                              child: Hero(
+                                tag: pkg.imageAsset,
+                                child: Image.asset(pkg.imageAsset, width: double.infinity, fit: BoxFit.cover),
+                              ),
+                            ),
+                            const SizedBox(height: 10),
+                            Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                              child: Text(pkg.title, style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 18)),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                              child: Text(pkg.formattedPrice, style: const TextStyle(color: Colors.grey, fontSize: 15)), // <-- FIXED
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
                   );
                 },
                 childCount: packages.length,
@@ -150,6 +160,7 @@ class _PackageGridPage extends StatelessWidget {
     );
   }
 }
+
 class PackageDetailPage extends StatelessWidget {
   final PackageItem pkg;
   final String packageType;
@@ -187,11 +198,16 @@ class PackageDetailPage extends StatelessWidget {
                   ),
                 ),
                 flexibleSpace: FlexibleSpaceBar(
-                  background: Image.asset(pkg.imageAsset, fit: BoxFit.cover),
+                  background: Hero(
+                    tag: pkg.imageAsset,
+                    child: Image.asset(pkg.imageAsset, fit: BoxFit.cover),
+                  ),
                 ),
               ),
               SliverToBoxAdapter(
-                child: Padding(
+                child: AnimatedContainer(
+                  duration: const Duration(milliseconds: 350),
+                  curve: Curves.easeInOut,
                   padding: const EdgeInsets.all(16.0),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -203,7 +219,7 @@ class PackageDetailPage extends StatelessWidget {
                       ),
                       const SizedBox(height: 8),
                       Text(pkg.title, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 22)),
-                      Text(pkg.price, style: const TextStyle(color: Colors.grey, fontSize: 18)),
+                      Text(pkg.formattedPrice, style: const TextStyle(color: Colors.grey, fontSize: 18)), // <-- FIXED
                       const Divider(height: 24),
                       const Text("Inclusions:", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 17, color: Colors.grey)),
                       ...pkg.inclusions.map((item) => Text(item, style: const TextStyle(fontSize: 18))),
@@ -212,7 +228,7 @@ class PackageDetailPage extends StatelessWidget {
                         const Text("FREE", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 17, color: Colors.grey)),
                         ...pkg.freeItems.map((item) => Text(item, style: const TextStyle(fontSize: 18))),
                       ],
-                      const SizedBox(height: 120), // Space for the floating button
+                      const SizedBox(height: 120),
                     ],
                   ),
                 ),
@@ -221,7 +237,9 @@ class PackageDetailPage extends StatelessWidget {
           ),
           Align(
             alignment: Alignment.bottomCenter,
-            child: Container(
+            child: AnimatedContainer(
+              duration: const Duration(milliseconds: 350),
+              curve: Curves.easeInOut,
               padding: const EdgeInsets.all(16),
               color: Colors.white,
               child: SizedBox(
@@ -233,6 +251,7 @@ class PackageDetailPage extends StatelessWidget {
                     backgroundColor: Colors.black,
                     foregroundColor: Colors.white,
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                    elevation: 6,
                   ),
                   child: const Text("Book Now", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
                 ),

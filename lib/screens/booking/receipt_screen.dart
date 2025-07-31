@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:lenshine/models/booking_details.dart';
 
 class ReceiptScreen extends StatelessWidget {
@@ -13,6 +14,8 @@ class ReceiptScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final firebaseUser = FirebaseAuth.instance.currentUser;
+
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
@@ -25,15 +28,24 @@ class ReceiptScreen extends StatelessWidget {
               const Text("Payment In Progress", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 22)),
               const SizedBox(height: 30),
               
-              _buildInfoSection(title: "Name", value: "Kristine Merylle"),
-              _buildInfoSection(title: "Phone No.", value: "09831234567"),
-              _buildInfoSection(title: "Email", value: "kristinemeryllem@gmail.com"),
+              _buildInfoSection(
+                title: "Name",
+                value: firebaseUser?.displayName ?? "N/A",
+              ),
+              _buildInfoSection(
+                title: "Phone No.",
+                value: bookingDetails.userProfile?['phone'] ?? firebaseUser?.phoneNumber ?? "N/A",
+              ),
+              _buildInfoSection(
+                title: "Email",
+                value: firebaseUser?.email ?? "N/A",
+              ),
 
               const Divider(height: 24),
 
               Text(bookingDetails.label, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
               _buildBookingRow("Package", bookingDetails.pkg.title),
-              _buildBookingRow("Schedule Date", bookingDetails.date),
+              _buildBookingRow("Schedule Date", bookingDetails.date ?? "N/A"),
               _buildBookingRow("Time", bookingDetails.time),
               if(bookingDetails.backdrop != null)
                 _buildBookingRow("Backdrop Color", bookingDetails.backdrop!),
@@ -67,7 +79,7 @@ class ReceiptScreen extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     const Text("TOTAL", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20)),
-                    Text(bookingDetails.pkg.price, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20)),
+                    Text("PHP${bookingDetails.price.toStringAsFixed(2)}", style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20)),
                   ],
                 ),
               ),

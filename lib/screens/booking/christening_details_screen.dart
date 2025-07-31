@@ -6,19 +6,26 @@ class ChristeningDetails extends StatelessWidget {
   final PackageItem pkg;
   final VoidCallback onBack;
   final Function(PackageItem, String) onBookNow;
-  const ChristeningDetails({super.key, required this.pkg, required this.onBack, required this.onBookNow});
 
-  @override
+  const ChristeningDetails({
+    super.key,
+    required this.pkg,
+    required this.onBack,
+    required this.onBookNow,
+    // REMOVE packageType from here if present
+  });
+
+
+@override
   Widget build(BuildContext context) {
     return PackageDetailPage(
       pkg: pkg,
-      packageType: "Christening",
+      packageType: "Christening", // <-- always provided here
       onBack: onBack,
       onBookNow: (p) => onBookNow(p, "Christening"),
     );
   }
 }
-
 
 class PackageDetailPage extends StatelessWidget {
   final PackageItem pkg;
@@ -57,11 +64,16 @@ class PackageDetailPage extends StatelessWidget {
                   ),
                 ),
                 flexibleSpace: FlexibleSpaceBar(
-                  background: Image.asset(pkg.imageAsset, fit: BoxFit.cover),
+                  background: Hero(
+                    tag: pkg.imageAsset,
+                    child: Image.asset(pkg.imageAsset, fit: BoxFit.cover),
+                  ),
                 ),
               ),
               SliverToBoxAdapter(
-                child: Padding(
+                child: AnimatedContainer(
+                  duration: const Duration(milliseconds: 350),
+                  curve: Curves.easeInOut,
                   padding: const EdgeInsets.all(16.0),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -73,7 +85,7 @@ class PackageDetailPage extends StatelessWidget {
                       ),
                       const SizedBox(height: 8),
                       Text(pkg.title, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 22)),
-                      Text(pkg.price, style: const TextStyle(color: Colors.grey, fontSize: 18)),
+                      Text(pkg.formattedPrice, style: const TextStyle(color: Colors.grey, fontSize: 18)), // <-- FIXED
                       const Divider(height: 24),
                       const Text("Inclusions:", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 17, color: Colors.grey)),
                       ...pkg.inclusions.map((item) => Text(item, style: const TextStyle(fontSize: 18))),
@@ -82,7 +94,7 @@ class PackageDetailPage extends StatelessWidget {
                         const Text("FREE", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 17, color: Colors.grey)),
                         ...pkg.freeItems.map((item) => Text(item, style: const TextStyle(fontSize: 18))),
                       ],
-                      const SizedBox(height: 120), // Space for the floating button
+                      const SizedBox(height: 120),
                     ],
                   ),
                 ),
@@ -91,7 +103,9 @@ class PackageDetailPage extends StatelessWidget {
           ),
           Align(
             alignment: Alignment.bottomCenter,
-            child: Container(
+            child: AnimatedContainer(
+              duration: const Duration(milliseconds: 350),
+              curve: Curves.easeInOut,
               padding: const EdgeInsets.all(16),
               color: Colors.white,
               child: SizedBox(
@@ -103,6 +117,7 @@ class PackageDetailPage extends StatelessWidget {
                     backgroundColor: Colors.black,
                     foregroundColor: Colors.white,
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                    elevation: 6,
                   ),
                   child: const Text("Book Now", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
                 ),

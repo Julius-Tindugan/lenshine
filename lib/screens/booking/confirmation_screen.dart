@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:lenshine/models/booking_details.dart';
+
 class ConfirmationScreen extends StatelessWidget {
   final BookingDetails bookingDetails;
   final VoidCallback onContinue;
@@ -7,33 +9,30 @@ class ConfirmationScreen extends StatelessWidget {
   final VoidCallback onBack;
 
   const ConfirmationScreen({
-    super.key, 
-    required this.bookingDetails, 
-    required this.onContinue, 
-    required this.onCancel, 
-    required this.onBack
+    super.key,
+    required this.bookingDetails,
+    required this.onContinue,
+    required this.onCancel,
+    required this.onBack,
   });
 
   @override
   Widget build(BuildContext context) {
+    final firebaseUser = FirebaseAuth.instance.currentUser;
+    final details = bookingDetails;
+
     return Scaffold(
-      backgroundColor: Colors.grey[200],
       appBar: AppBar(
-        backgroundColor: Colors.grey[200],
+        backgroundColor: Colors.white,
         elevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios_new, color: Colors.black),
           onPressed: onBack,
         ),
-        title: Column(
-          children: [
-            Text(bookingDetails.label, style: const TextStyle(fontSize: 20, color: Colors.black)),
-            Text(bookingDetails.pkg.title, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 26, color: Colors.black)),
-            const Text("DETAILS", style: TextStyle(fontSize: 16, color: Colors.black)),
-          ],
-        ),
+        title: const Text("Booking Confirmation", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 23, color: Colors.black)),
         centerTitle: true,
       ),
+      backgroundColor: Colors.white,
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -42,19 +41,19 @@ class ConfirmationScreen extends StatelessWidget {
             Card(
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
               elevation: 1,
-              child: const Padding(
-                padding: EdgeInsets.all(16.0),
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text("Name", style: TextStyle(fontWeight: FontWeight.w800)),
-                    Text("Kristine Merylle"),
-                    SizedBox(height: 9),
-                    Text("Phone No.", style: TextStyle(fontWeight: FontWeight.w800)),
-                    Text("09381234567"),
-                    SizedBox(height: 9),
-                    Text("Email", style: TextStyle(fontWeight: FontWeight.w800)),
-                    Text("kristinemeryllemll@gmail.com"),
+                    const Text("Name", style: TextStyle(fontWeight: FontWeight.w800)),
+                    Text(firebaseUser?.displayName ?? "N/A"),
+                    const SizedBox(height: 9),
+                    const Text("Phone No.", style: TextStyle(fontWeight: FontWeight.w800)),
+                    Text(details.userProfile?['phone'] ?? firebaseUser?.phoneNumber ?? "N/A"),
+                    const SizedBox(height: 9),
+                    const Text("Email", style: TextStyle(fontWeight: FontWeight.w800)),
+                    Text(firebaseUser?.email ?? "N/A"),
                   ],
                 ),
               ),
@@ -67,14 +66,14 @@ class ConfirmationScreen extends StatelessWidget {
               child: Column(
                 children: [
                   _buildSection("Package", [
-                    Text(bookingDetails.pkg.title, style: const TextStyle(fontWeight: FontWeight.bold)),
+                    Text(details.pkg.title, style: const TextStyle(fontWeight: FontWeight.bold)),
                     const SizedBox(height: 10),
                     const Text("Inclusions", style: TextStyle(fontWeight: FontWeight.bold)),
-                    ...bookingDetails.pkg.inclusions.map((e) => Text(e)),
+                    ...details.pkg.inclusions.map((e) => Text(e)),
                     const SizedBox(height: 10),
-                    if (bookingDetails.pkg.freeItems.isNotEmpty) ...[
+                    if (details.pkg.freeItems.isNotEmpty) ...[
                       const Text("FREE", style: TextStyle(fontWeight: FontWeight.bold)),
-                      ...bookingDetails.pkg.freeItems.map((e) => Text(e)),
+                      ...details.pkg.freeItems.map((e) => Text(e)),
                     ]
                   ]),
                   _buildDivider(),
@@ -82,37 +81,43 @@ class ConfirmationScreen extends StatelessWidget {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        const Column(
+                        Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [Text("Schedule Date", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)), Text("Date Placeholder")],
+                          children: [
+                            const Text("Schedule Date", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                            Text(details.date ?? "N/A"),
+                          ],
                         ),
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [const Text("Time", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)), Text(bookingDetails.time)],
+                          children: [
+                            const Text("Time", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                            Text(details.time),
+                          ],
                         ),
                       ],
                     ),
-                    if(bookingDetails.backdrop != null)...[
+                    if (details.backdrop != null) ...[
                       const SizedBox(height: 10),
                       const Text("Backdrop Color", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
-                      Text(bookingDetails.backdrop!),
+                      Text(details.backdrop!),
                     ]
                   ]),
                   _buildDivider(),
                   _buildSection("Add-Ons", [
-                    if(bookingDetails.addOns.isNotEmpty)
-                      ...bookingDetails.addOns.map((e) => Text("• $e", style: const TextStyle(fontSize: 16)))
+                    if (details.addOns.isNotEmpty)
+                      ...details.addOns.map((e) => Text("• $e", style: const TextStyle(fontSize: 16)))
                     else
                       const Text("No Add-Ons Selected", style: TextStyle(color: Colors.grey, fontSize: 16))
                   ]),
-                   _buildDivider(),
+                  _buildDivider(),
                   Padding(
                     padding: const EdgeInsets.all(16.0),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         const Text("TOTAL", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20)),
-                        Text(bookingDetails.pkg.price, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20)),
+                        Text("PHP${details.price.toStringAsFixed(2)}", style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20)),
                       ],
                     ),
                   )
@@ -121,13 +126,31 @@ class ConfirmationScreen extends StatelessWidget {
             ),
             const SizedBox(height: 20),
             SizedBox(
-              width: double.infinity, height: 48,
-              child: ElevatedButton(onPressed: onContinue, style: ElevatedButton.styleFrom(backgroundColor: Colors.black, foregroundColor: Colors.white, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16))), child: const Text("Continue", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18))),
+              width: double.infinity,
+              height: 48,
+              child: ElevatedButton(
+                onPressed: onContinue,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.black,
+                  foregroundColor: Colors.white,
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                ),
+                child: const Text("Continue", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
+              ),
             ),
             const SizedBox(height: 8),
-             SizedBox(
-              width: double.infinity, height: 48,
-              child: OutlinedButton(onPressed: onCancel, style: OutlinedButton.styleFrom(foregroundColor: Colors.black, side: const BorderSide(color: Colors.black), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16))), child: const Text("Cancel", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18))),
+            SizedBox(
+              width: double.infinity,
+              height: 48,
+              child: OutlinedButton(
+                onPressed: onCancel,
+                style: OutlinedButton.styleFrom(
+                  foregroundColor: Colors.black,
+                  side: const BorderSide(color: Colors.black),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                ),
+                child: const Text("Cancel", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
+              ),
             )
           ],
         ),
@@ -152,4 +175,3 @@ class ConfirmationScreen extends StatelessWidget {
     );
   }
 }
-

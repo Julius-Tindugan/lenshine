@@ -1,12 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:lenshine/models/package_item.dart';
 
-
-
 class WeddingDetailsScreen extends StatefulWidget {
+  final List<PackageItem> packages; // <-- Accept packages from parent
   final VoidCallback onBack;
   final Function(PackageItem, String) onBookNow;
-  const WeddingDetailsScreen({super.key, required this.onBack, required this.onBookNow});
+  const WeddingDetailsScreen({
+    super.key,
+    required this.packages,
+    required this.onBack,
+    required this.onBookNow,
+  });
 
   @override
   WeddingDetailsScreenState createState() => WeddingDetailsScreenState();
@@ -29,16 +33,12 @@ class WeddingDetailsScreenState extends State<WeddingDetailsScreen> {
     return _PackageGridPage(
       pageTitle: "WEDDING",
       headerImage: 'assets/images/weddingtwo.png',
-      packages: _weddingPackages,
+      packages: widget.packages, // <-- Use dynamic packages
       onBack: widget.onBack,
       onPackageSelected: (pkg) => setState(() => _selectedPackage = pkg),
     );
   }
 }
-const _weddingPackages = [
-  PackageItem(title: "Civil Wedding", price: "PHP 5000", imageAsset: 'assets/images/civil.png', inclusions: ["Full Event Coverage", "Pre-Event Photoshoot", "200 - 300+ Soft Copies", "All Copies Enhanced Sent", "Sent Via Google Drive", "Online Gallery Posted"], freeItems: []),
-  PackageItem(title: "Church Wedding", price: "PHP 7500", imageAsset: 'assets/images/church.png', inclusions: ["Full Event Coverage", "Pre-Event Photoshoot", "200 - 300+ Soft Copies", "All Copies Enhanced Sent", "Sent Via Google Drive", "Online Gallery Posted"], freeItems: []),
-];
 
 class _PackageGridPage extends StatelessWidget {
   final String pageTitle;
@@ -111,36 +111,36 @@ class _PackageGridPage extends StatelessWidget {
                 childAspectRatio: 1 / 1.35,
               ),
               delegate: SliverChildBuilderDelegate(
-                (context, index) {
-                  final pkg = packages[index];
-                  return GestureDetector(
-                    onTap: () => onPackageSelected(pkg),
-                   child: Card(
-  clipBehavior: Clip.antiAlias,
-  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-  child: Column(
-    crossAxisAlignment: CrossAxisAlignment.start,
-    mainAxisSize: MainAxisSize.min, // Add this line
-    children: [
-      Flexible(
-        child: Image.asset(pkg.imageAsset, width: double.infinity, fit: BoxFit.cover),
+  (context, index) {
+    final pkg = packages[index];
+    return GestureDetector(
+      onTap: () => onPackageSelected(pkg),
+      child: Card(
+        clipBehavior: Clip.antiAlias,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Flexible(
+              child: Image.asset(pkg.imageAsset, width: double.infinity, fit: BoxFit.cover), // <-- Use pkg.imageAsset
+            ),
+            const SizedBox(height: 10),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8.0),
+              child: Text(pkg.title, style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 18)),
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8.0),
+              child: Text(pkg.formattedPrice, style: const TextStyle(color: Colors.grey, fontSize: 15)), // <-- FIXED
+            ),
+          ],
+        ),
       ),
-      const SizedBox(height: 10), // You can reduce this if needed
-      Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 8.0),
-        child: Text(pkg.title, style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 18)),
-      ),
-      Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 8.0),
-        child: Text(pkg.price, style: const TextStyle(color: Colors.grey, fontSize: 15)),
-      ),
-    ],
-  ),
+    );
+  },
+  childCount: packages.length,
 ),
-                  );
-                },
-                childCount: packages.length,
-              ),
             ),
           ),
           const SliverToBoxAdapter(child: SizedBox(height: 20)),
@@ -203,7 +203,7 @@ class PackageDetailPage extends StatelessWidget {
                       ),
                       const SizedBox(height: 8),
                       Text(pkg.title, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 22)),
-                      Text(pkg.price, style: const TextStyle(color: Colors.grey, fontSize: 18)),
+                      Text(pkg.formattedPrice, style: const TextStyle(color: Colors.grey, fontSize: 18)), // <-- FIXED
                       const Divider(height: 24),
                       const Text("Inclusions:", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 17, color: Colors.grey)),
                       ...pkg.inclusions.map((item) => Text(item, style: const TextStyle(fontSize: 18))),
@@ -212,7 +212,7 @@ class PackageDetailPage extends StatelessWidget {
                         const Text("FREE", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 17, color: Colors.grey)),
                         ...pkg.freeItems.map((item) => Text(item, style: const TextStyle(fontSize: 18))),
                       ],
-                      const SizedBox(height: 120), // Space for the floating button
+                      const SizedBox(height: 120),
                     ],
                   ),
                 ),

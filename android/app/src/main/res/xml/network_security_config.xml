@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<network-security-config>
+    <!-- Allow cleartext traffic for local development -->
+    <domain-config cleartextTrafficPermitted="true">
+        <!-- Your computer's IP address for physical device testing -->
+        <domain includeSubdomains="false">192.168.197.12</domain>
+        <!-- Localhost for emulator testing -->
+        <domain includeSubdomains="false">10.0.2.2</domain>
+        <!-- Localhost for web testing -->
+        <domain includeSubdomains="false">localhost</domain>
+        <!-- Allow all local network IPs (for testing) -->
+        <domain includeSubdomains="false">192.168.0.0/16</domain>
+        <domain includeSubdomains="false">10.0.0.0/8</domain>
+        <domain includeSubdomains="false">172.16.0.0/12</domain>
+    </domain-config>
+    
+    <!-- Default configuration for production -->
+    <base-config cleartextTrafficPermitted="false">
+        <trust-anchors>
+            <certificates src="system"/>
+        </trust-anchors>
+    </base-config>
+</network-security-config> 

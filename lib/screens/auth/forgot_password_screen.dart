@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-
+import 'package:lenshine/services/api_service.dart';
 
 class ForgotPasswordScreen extends StatefulWidget {
   final VoidCallback onBack;
-  final VoidCallback onContinue;
+  final Function(String) onContinue; // Pass email
   const ForgotPasswordScreen({super.key, required this.onBack, required this.onContinue});
 
   @override
@@ -14,11 +14,19 @@ class ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
 
-  void _validateAndContinue() {
-    if(_formKey.currentState!.validate()){
-      widget.onContinue();
+void _validateAndContinue() async {
+  if(_formKey.currentState!.validate()){
+    final res = await ApiService.requestPasswordReset(email: _emailController.text.trim());
+    if (!mounted) return;
+    if (res['success'] == true) {
+      widget.onContinue(_emailController.text.trim());
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(res['error'] ?? 'Failed to send reset email'))
+      );
     }
   }
+}
 
   @override
   Widget build(BuildContext context) {
