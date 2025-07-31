@@ -19,9 +19,8 @@ The application comes packed with features to ensure a seamless user experience 
 * **User Profile Management**: Users can view and manage their profile information.
 * [cite_start]**Integrated Chatbot**: An "ASKLenShine" feature provides users with instant support and answers to frequently asked questions. [cite: 107, 219, 286]
 
-## 📸 Screenshots
-
-Here’s a glimpse of the LenShine application, from wireframes to the final design.
+## 🧐 Overview  
+In progress
 
 ### High-Fidelity Wireframes
 
@@ -33,23 +32,13 @@ Here’s a glimpse of the LenShine application, from wireframes to the final des
 
 ## 🛠️ Technologies Used
 
-This project was built using a combination of modern mobile development technologies:
-
-* [cite_start]**Framework**: [Flutter](https://flutter.dev/) [cite: 165]
-* [cite_start]**Programming Language**: [Dart](https://dart.dev/) [cite: 166]
-* **Backend as a Service (BaaS)**: [Firebase](https://firebase.google.com/)
-    * [cite_start]**Firebase Authentication** for user management. [cite: 191, 252]
-    * [cite_start]**Firebase Core** for connecting the app to the Firebase project. [cite: 193]
-* **Database**:
-    * [cite_start]**MySQL** managed via **XAMPP** for the custom backend. [cite: 171]
-* **APIs**:
-    * Custom **REST API** for fetching package data, managing user profiles, and handling bookings.
-    * [cite_start]**reCAPTCHA Enterprise** for bot protection and enhanced security. [cite: 196, 253, 266]
-* [cite_start]**State Management**: Stateful widget architecture with `SharedPreferences` for session persistence. [cite: 198, 229]
-* **Development Tools**:
-    * [cite_start]**Visual Studio Code** [cite: 168]
-    * [cite_start]**Android Studio** (for emulators) [cite: 167]
-    * **Git** for version control.
+## ✨ Features
+- **Authentication:** Email/password sign-up, login, and password reset via Firebase Auth :contentReference[oaicite:11]{index=11}  
+- **ReCAPTCHA Security:** Bot protection with reCAPTCHA Enterprise :contentReference[oaicite:12]{index=12}  
+- **Booking Flow:** Browse packages, select dates, confirm, and simulate payments :contentReference[oaicite:13]{index=13}  
+- **User Profile:** View and edit profile, session persistence with SharedPreferences :contentReference[oaicite:14]{index=14}  
+- **Navigation:** Custom bottom navigation bar for Home, Map, Chatbot, Profile :contentReference[oaicite:15]{index=15}  
+- **Receipt:** Dynamically generate and display booking receipts  
 
 ## 🚀 For Developers: Getting Started
 
