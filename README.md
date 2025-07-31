@@ -25,7 +25,7 @@ In progress
 ### High-Fidelity Wireframes
 
 **User Flow (Authentication, Booking, Profile, etc.)** 
-![User Flow](https://www.figma.com/design/D8kCVGI6u14ynVBOaDQQsY/LENSHINE?node-id=567-123&t=GTMdBHGHEXuVDuLo-1)
+[User Flow](https://www.figma.com/design/D8kCVGI6u14ynVBOaDQQsY/LENSHINE?node-id=567-123&t=GTMdBHGHEXuVDuLo-1)
 
 ## 🛠️ Technologies Used
 
