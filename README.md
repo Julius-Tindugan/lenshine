@@ -43,6 +43,7 @@ This project was built using a combination of modern mobile development technolo
     * **Visual Studio Code** 
     * **Android Studio** (for emulators) 
     * **Git** for version control.
+
 ## ✨ Features
 - **Authentication:** Email/password sign-up, login, and password reset via Firebase Auth   
 - **ReCAPTCHA Security:** Bot protection with reCAPTCHA Enterprise   
@@ -51,11 +52,7 @@ This project was built using a combination of modern mobile development technolo
 - **Navigation:** Custom bottom navigation bar for Home, Map, Chatbot, Profile   
 - **Receipt:** Dynamically generate and display booking receipts  
 
-## 🚀 For Developers: Getting Started
-
-Follow these instructions to get a copy of the project up and running on your local machine for development and testing purposes.
-
-### Prerequisites
+## Prerequisites
 
 Make sure you have the following installed on your machine:
 
@@ -97,13 +94,14 @@ Make sure you have the following installed on your machine:
         flutter run
         ```
 ## Method #2
-- * Download the apk-release on our gdrive [Here is the link](https://drive.google.com/drive/folders/11tCbQTv8Mmh9GT7TjpUh3ow1qJC0lDF-?usp=sharing)
-- * We used (https://render.com/) for free to host our server online in cloud so that we can operate the app without using xampp localhost.
-- * We also used (https://railway.com/) for free hosting of our mysql database in cloud.
+
+*Download the apk-release on our gdrive [Here is the link](https://drive.google.com/drive/folders/11tCbQTv8Mmh9GT7TjpUh3ow1qJC0lDF-?usp=sharing)*
+*We used (https://render.com/) for free to host our server online in cloud so that we can operate the app without using xampp localhost.*
+*We also used (https://railway.com/) for free hosting of our mysql database in cloud.*
 
 - **Download the app package.**
 
-- ** Unfortunately, the server and database will expire its free trial until August 30, 2025 so don't miss out to try our app, so the app will not be available. **
+- **Unfortunately, the server and database will expire its free trial until August 30, 2025 so don't miss out to try our app, so the app will not be available.**
 
 ### 📂 Project Structure
 
