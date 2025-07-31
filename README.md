@@ -33,11 +33,11 @@ In progress
 ## 🛠️ Technologies Used
 
 ## ✨ Features
-- **Authentication:** Email/password sign-up, login, and password reset via Firebase Auth :contentReference[oaicite:11]{index=11}  
-- **ReCAPTCHA Security:** Bot protection with reCAPTCHA Enterprise :contentReference[oaicite:12]{index=12}  
-- **Booking Flow:** Browse packages, select dates, confirm, and simulate payments :contentReference[oaicite:13]{index=13}  
-- **User Profile:** View and edit profile, session persistence with SharedPreferences :contentReference[oaicite:14]{index=14}  
-- **Navigation:** Custom bottom navigation bar for Home, Map, Chatbot, Profile :contentReference[oaicite:15]{index=15}  
+- **Authentication:** Email/password sign-up, login, and password reset via Firebase Auth   
+- **ReCAPTCHA Security:** Bot protection with reCAPTCHA Enterprise   
+- **Booking Flow:** Browse packages, select dates, confirm, and simulate payments   
+- **User Profile:** View and edit profile, session persistence with SharedPreferences   
+- **Navigation:** Custom bottom navigation bar for Home, Map, Chatbot, Profile   
 - **Receipt:** Dynamically generate and display booking receipts  
 
 ## 🚀 For Developers: Getting Started
