@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:lenshine/models/booking_details.dart';
+import 'package:lenshine/models/add_on-item.dart';
 
 class ConfirmationScreen extends StatelessWidget {
   final BookingDetails bookingDetails;
@@ -23,153 +24,155 @@ class ConfirmationScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: Colors.grey[50],
         elevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios_new, color: Colors.black),
           onPressed: onBack,
         ),
-        title: const Text("Booking Confirmation", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 23, color: Colors.black)),
+        title: const Text("Booking Confirmation", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 22, color: Colors.black)),
         centerTitle: true,
       ),
-      backgroundColor: Colors.white,
+      backgroundColor: Colors.grey[50],
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // User Info
-            Card(
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-              elevation: 1,
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text("Name", style: TextStyle(fontWeight: FontWeight.w800)),
-                    Text(firebaseUser?.displayName ?? "N/A"),
-                    const SizedBox(height: 9),
-                    const Text("Phone No.", style: TextStyle(fontWeight: FontWeight.w800)),
-                    Text(details.userProfile?['phone'] ?? firebaseUser?.phoneNumber ?? "N/A"),
-                    const SizedBox(height: 9),
-                    const Text("Email", style: TextStyle(fontWeight: FontWeight.w800)),
-                    Text(firebaseUser?.email ?? "N/A"),
-                  ],
-                ),
-              ),
+            const Text("Please review your booking details before proceeding.", style: TextStyle(color: Colors.grey, fontSize: 15)),
+            const SizedBox(height: 16),
+            
+            // User Info Card
+            _buildInfoCard(
+              title: "Customer Details",
+              children: [
+                _buildInfoRow("Name", firebaseUser?.displayName ?? "N/A"),
+                _buildInfoRow("Phone No.", details.userProfile?['phone'] ?? firebaseUser?.phoneNumber ?? "N/A"),
+                _buildInfoRow("Email", firebaseUser?.email ?? "N/A"),
+              ],
             ),
-            const SizedBox(height: 7),
-            // Package Info
-            Card(
-              shape: const RoundedRectangleBorder(),
-              margin: EdgeInsets.zero,
-              child: Column(
-                children: [
-                  _buildSection("Package", [
-                    Text(details.pkg.title, style: const TextStyle(fontWeight: FontWeight.bold)),
-                    const SizedBox(height: 10),
-                    const Text("Inclusions", style: TextStyle(fontWeight: FontWeight.bold)),
-                    ...details.pkg.inclusions.map((e) => Text(e)),
-                    const SizedBox(height: 10),
-                    if (details.pkg.freeItems.isNotEmpty) ...[
-                      const Text("FREE", style: TextStyle(fontWeight: FontWeight.bold)),
-                      ...details.pkg.freeItems.map((e) => Text(e)),
-                    ]
-                  ]),
-                  _buildDivider(),
-                  _buildSection(null, [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Text("Schedule Date", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
-                            Text(details.date ?? "N/A"),
-                          ],
-                        ),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Text("Time", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
-                            Text(details.time),
-                          ],
-                        ),
-                      ],
-                    ),
-                    if (details.backdrop != null) ...[
-                      const SizedBox(height: 10),
-                      const Text("Backdrop Color", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
-                      Text(details.backdrop!),
-                    ]
-                  ]),
-                  _buildDivider(),
-                  _buildSection("Add-Ons", [
-                    if (details.addOns.isNotEmpty)
-                      ...details.addOns.map((e) => Text("• $e", style: const TextStyle(fontSize: 16)))
-                    else
-                      const Text("No Add-Ons Selected", style: TextStyle(color: Colors.grey, fontSize: 16))
-                  ]),
-                  _buildDivider(),
-                  Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        const Text("TOTAL", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20)),
-                        Text("PHP${details.price.toStringAsFixed(2)}", style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20)),
-                      ],
-                    ),
-                  )
-                ],
-              ),
+            const SizedBox(height: 16),
+
+            // Booking Details Card
+            _buildInfoCard(
+              title: "Booking Summary",
+              children: [
+                _buildInfoRow("Package", details.pkg.title),
+                _buildInfoRow("Schedule", "${details.date} at ${details.time}"),
+                if (details.backdrop != null)
+                  _buildInfoRow("Backdrop", details.backdrop!),
+              ],
             ),
-            const SizedBox(height: 20),
-            SizedBox(
-              width: double.infinity,
-              height: 48,
-              child: ElevatedButton(
-                onPressed: onContinue,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.black,
-                  foregroundColor: Colors.white,
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-                ),
-                child: const Text("Continue", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
-              ),
+            const SizedBox(height: 16),
+
+            // Price Details Card
+            _buildInfoCard(
+              title: "Payment Summary",
+              children: [
+                _buildPriceRow("Package Price", details.pkg.price),
+                const Divider(),
+                // Display Add-ons with their prices
+                if (details.addOns.isNotEmpty)
+                  ...details.addOns.map((addon) => _buildPriceRow("  + ${addon.name}", addon.price)).toList(),
+                
+                _buildPriceRow("Add-ons Subtotal", details.addOnsSubtotal, isBold: true),
+                const Divider(thickness: 1.5),
+                _buildPriceRow("Grand Total", details.price, isTotal: true),
+              ],
             ),
-            const SizedBox(height: 8),
-            SizedBox(
-              width: double.infinity,
-              height: 48,
-              child: OutlinedButton(
-                onPressed: onCancel,
-                style: OutlinedButton.styleFrom(
-                  foregroundColor: Colors.black,
-                  side: const BorderSide(color: Colors.black),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-                ),
-                child: const Text("Cancel", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
-              ),
-            )
+            const SizedBox(height: 24),
+          ],
+        ),
+      ),
+      bottomNavigationBar: _buildActionButtons(),
+    );
+  }
+
+  Widget _buildInfoCard({required String title, required List<Widget> children}) {
+    return Card(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      elevation: 1,
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(title, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
+            const SizedBox(height: 12),
+            ...children,
           ],
         ),
       ),
     );
   }
 
-  Widget _buildDivider() => Container(color: Colors.grey[200], height: 6);
-
-  Widget _buildSection(String? title, List<Widget> children) {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+  Widget _buildInfoRow(String title, String value) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          if (title != null) Text(title, style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 19)),
-          if (title != null) const SizedBox(height: 8),
-          ...children,
+          Text(title, style: const TextStyle(color: Colors.grey)),
+          Text(value, style: const TextStyle(fontWeight: FontWeight.w500)),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildPriceRow(String title, double value, {bool isBold = false, bool isTotal = false}) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            title,
+            style: TextStyle(
+              fontWeight: isBold || isTotal ? FontWeight.bold : FontWeight.normal,
+              fontSize: isTotal ? 18 : 14,
+            ),
+          ),
+          Text(
+            "PHP ${value.toStringAsFixed(2)}",
+            style: TextStyle(
+              fontWeight: isBold || isTotal ? FontWeight.bold : FontWeight.normal,
+              fontSize: isTotal ? 18 : 14,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildActionButtons() {
+    return Container(
+      padding: const EdgeInsets.all(16.0).copyWith(bottom: 24.0),
+      color: Colors.grey[50],
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          SizedBox(
+            width: double.infinity,
+            height: 50,
+            child: ElevatedButton(
+              onPressed: onContinue,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.black,
+                foregroundColor: Colors.white,
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              ),
+              child: const Text("Continue to Payment", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+            ),
+          ),
+          const SizedBox(height: 8),
+          SizedBox(
+            width: double.infinity,
+            height: 50,
+            child: TextButton(
+              onPressed: onCancel,
+              child: const Text("Cancel Booking", style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold, fontSize: 16)),
+            ),
+          )
         ],
       ),
     );

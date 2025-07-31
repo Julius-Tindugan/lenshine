@@ -20,87 +20,72 @@ class ReceiptScreen extends StatelessWidget {
       backgroundColor: Colors.white,
       body: SafeArea(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.all(16.0),
+          padding: const EdgeInsets.all(24.0),
           child: Column(
             children: [
-              Image.asset('assets/images/success.png', height: 200),
-              const SizedBox(height: 2),
-              const Text("Payment In Progress", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 22)),
-              const SizedBox(height: 30),
+              Image.asset('assets/images/success.png', height: 150),
+              const SizedBox(height: 16),
+              const Text(
+                "Payment In Progress", 
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24)
+              ),
+              const SizedBox(height: 8),
+              const Text(
+                "Your booking is confirmed. We will verify your payment shortly.",
+                textAlign: TextAlign.center,
+                style: TextStyle(color: Colors.grey, fontSize: 15),
+              ),
+              const SizedBox(height: 24),
               
-              _buildInfoSection(
-                title: "Name",
-                value: firebaseUser?.displayName ?? "N/A",
-              ),
-              _buildInfoSection(
-                title: "Phone No.",
-                value: bookingDetails.userProfile?['phone'] ?? firebaseUser?.phoneNumber ?? "N/A",
-              ),
-              _buildInfoSection(
-                title: "Email",
-                value: firebaseUser?.email ?? "N/A",
-              ),
-
-              const Divider(height: 24),
-
-              Text(bookingDetails.label, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
-              _buildBookingRow("Package", bookingDetails.pkg.title),
-              _buildBookingRow("Schedule Date", bookingDetails.date ?? "N/A"),
-              _buildBookingRow("Time", bookingDetails.time),
-              if(bookingDetails.backdrop != null)
-                _buildBookingRow("Backdrop Color", bookingDetails.backdrop!),
-
-              if(bookingDetails.addOns.isNotEmpty) ...[
-                const SizedBox(height: 8),
-                const Align(
-                  alignment: Alignment.centerLeft,
-                  child: Text("Add-Ons", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16))
+              // Booking Details Card
+              Container(
+                padding: const EdgeInsets.all(16.0),
+                decoration: BoxDecoration(
+                  border: Border.all(color: Colors.grey.shade300),
+                  borderRadius: BorderRadius.circular(12),
                 ),
-                Align(
-                  alignment: Alignment.centerLeft,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: bookingDetails.addOns.map((e) => Text("• $e", style: const TextStyle(fontSize: 15))).toList(),
-                  ),
-                )
-              ] else ... [
-                const SizedBox(height: 8),
-                const Align(
-                  alignment: Alignment.centerLeft,
-                  child: Text("Add-Ons: None", style: TextStyle(color: Colors.grey, fontSize: 15))
-                )
-              ],
-              
-              const Divider(height: 24),
-              
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text("TOTAL", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20)),
-                    Text("PHP${bookingDetails.price.toStringAsFixed(2)}", style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20)),
+                    _buildInfoRow("Booking For", firebaseUser?.displayName ?? "N/A"),
+                    _buildInfoRow("Package", bookingDetails.pkg.title),
+                    _buildInfoRow("Schedule", "${bookingDetails.date} at ${bookingDetails.time}"),
+                    if(bookingDetails.backdrop != null)
+                      _buildInfoRow("Backdrop", bookingDetails.backdrop!),
+                    
+                    const Divider(height: 24),
+
+                    // Price Breakdown
+                    _buildPriceRow("Package Price", bookingDetails.pkg.price),
+                    if (bookingDetails.addOns.isNotEmpty) ...[
+                      const SizedBox(height: 8),
+                      const Text("Add-Ons:", style: TextStyle(color: Colors.grey)),
+                      ...bookingDetails.addOns.map((addon) => _buildPriceRow("  + ${addon.name}", addon.price)).toList(),
+                    ],
+                    const Divider(height: 16),
+                    _buildPriceRow("Total Paid", bookingDetails.price, isTotal: true),
                   ],
                 ),
               ),
-              const SizedBox(height: 25),
+              
+              const SizedBox(height: 24),
               const Text(
-                "Take a screenshot of this and present it to the staff during your appointment.",
+                "Please take a screenshot of this receipt for your records. Present it to our staff upon arrival.",
                 textAlign: TextAlign.center,
                 style: TextStyle(color: Colors.grey, fontSize: 13),
               ),
-              const SizedBox(height: 8),
+              const SizedBox(height: 16),
               SizedBox(
                 width: double.infinity,
-                height: 48,
+                height: 50,
                 child: ElevatedButton(
                   onPressed: onBackToHome,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.black,
                     foregroundColor: Colors.white,
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                   ),
-                  child: const Text("Back to home", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                  child: const Text("Back to Home", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
                 ),
               )
             ],
@@ -110,24 +95,50 @@ class ReceiptScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildInfoSection({required String title, required String value}){
-    return Align(
-      alignment: Alignment.centerLeft,
-      child: Column(
+  Widget _buildInfoRow(String title, String value) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 6.0),
+      child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(title, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
-          Text(value),
-          const SizedBox(height: 8),
+          Text(title, style: const TextStyle(color: Colors.grey)),
+          const SizedBox(width: 16),
+          Expanded(
+            child: Text(
+              value, 
+              textAlign: TextAlign.end,
+              style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 15)
+            ),
+          ),
         ],
       ),
     );
   }
 
-  Widget _buildBookingRow(String title, String value){
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [Text(title), Text(value)],
+  Widget _buildPriceRow(String title, double value, {bool isTotal = false}) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            title,
+            style: TextStyle(
+              fontWeight: isTotal ? FontWeight.bold : FontWeight.normal,
+              fontSize: isTotal ? 18 : 14,
+            ),
+          ),
+          Text(
+            "PHP ${value.toStringAsFixed(2)}",
+            style: TextStyle(
+              fontWeight: isTotal ? FontWeight.bold : FontWeight.normal,
+              fontSize: isTotal ? 18 : 14,
+              color: isTotal ? Colors.black : Colors.grey[800],
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
