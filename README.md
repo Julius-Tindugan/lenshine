@@ -1,50 +1,66 @@
-# ✨ Lenshine
+<!-- PROJECT BADGES -->
+<p align="center">
+  <a href="#-overview"><img src="https://img.shields.io/badge/-LenShine-blue?style=flat-square" alt="Project"></a>
+  <a href="https://flutter.dev"><img src="https://img.shields.io/badge/Flutter-3.10.0-blue?logo=flutter&logoColor=white&style=flat-square" alt="Flutter"></a>
+  <a href="https://dart.dev"><img src="https://img.shields.io/badge/Dart-3.0.0-blue?logo=dart&logoColor=white&style=flat-square" alt="Dart"></a>
+  <a href="https://firebase.google.com/"><img src="https://img.shields.io/badge/Firebase-Auth-orange?logo=firebase&logoColor=white&style=flat-square" alt="Firebase"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-green?style=flat-square" alt="License"></a>
+</p>
 
-**Lenshine** is a mobile booking application built with [Flutter](https://flutter.dev), developed for **Shine Spot Studio**. It provides a seamless and intuitive experience for scheduling studio sessions.
-
----
-
-## 📱 About the App
-
-Lenshine simplifies the booking process for photography sessions by allowing users to:
-
-- 📆 View available time slots
-- ✅ Book and manage appointments
-- 🔔 Receive booking confirmations and reminders
+# LenShine  
+*Mobile Booking Application for Shine Spot Studio*
 
 ---
 
-## 🚀 Built With
-
-- [Flutter](https://flutter.dev) – Cross-platform UI toolkit
-- [Dart](https://dart.dev) – Programming language for Flutter
-
----
-
-## 👨‍💻 Developed By
-
-- **Kristine Merylle M. Lalong-isip**
-- **Julius C. Tindugan**
-- **Reymark M. Arguelles**
+## 📑 Table of Contents
+1. [Overview](#-overview)  
+2. [Demo](#-demo)  
+3. [Features](#-features)  
+4. [Tech Stack](#-tech-stack)  
+5. [Installation](#-installation)  
+6. [Usage](#-usage)  
+7. [Developers](#-developers)  
+8. [License](#-license)  
 
 ---
 
-## 📌 Project Status
-
-🛠️ **In Development** – We are actively working on new features and improvements.
-
----
-
-## 📷 Screenshots (Coming Soon)
-
-Stay tuned for preview images of the app interface!
+## 🧐 Overview  
+LenShine is a cross-platform Flutter app that streamlines photography studio bookings, removing manual scheduling inefficiencies and centralizing all operations in one intuitive interface :contentReference[oaicite:9]{index=9}.  
 
 ---
 
-## 📂 Getting Started (Optional)
-
-> _Coming soon_: Setup instructions for running the app locally.
+## 🎥 Demo  
+> _Add a GIF or screenshot of your app in action here_  
+> For an interactive prototype, visit:  
+> [Figma Prototype](https://www.figma.com/design/D8kCVGI6u14ynVBOaDQQsY/LENSHINE?node-id=567-123) :contentReference[oaicite:10]{index=10}
 
 ---
 
-Feel free to [open an issue](https://github.com/your-repo/issues) or contribute via pull request. Thanks for checking out Lenshine!
+## ✨ Features
+- **Authentication:** Email/password sign-up, login, and password reset via Firebase Auth :contentReference[oaicite:11]{index=11}  
+- **ReCAPTCHA Security:** Bot protection with reCAPTCHA Enterprise :contentReference[oaicite:12]{index=12}  
+- **Booking Flow:** Browse packages, select dates, confirm, and simulate payments :contentReference[oaicite:13]{index=13}  
+- **User Profile:** View and edit profile, session persistence with SharedPreferences :contentReference[oaicite:14]{index=14}  
+- **Navigation:** Custom bottom navigation bar for Home, Map, Chatbot, Profile :contentReference[oaicite:15]{index=15}  
+- **Receipt:** Dynamically generate and display booking receipts  
+
+---
+
+## 🛠 Tech Stack  
+| Layer              | Technologies & Packages                              |
+|--------------------|-------------------------------------------------------|
+| **UI**             | Flutter, Material Design                             |
+| **Language**       | Dart                                                |
+| **State & Storage**| SharedPreferences, Firebase Core                     |
+| **Auth**           | Firebase Auth, reCAPTCHA Enterprise :contentReference[oaicite:16]{index=16}  |
+| **Backend API**    | Custom REST API via `ApiService` (HTTP)              |
+| **Database**       | Firebase Authentication & Firestore / MySQL (XAMPP)  |
+
+---
+
+## 🚀 Installation  
+
+1. **Clone Repo**  
+   ```bash
+   git clone https://github.com/<your-username>/lenshine.git
+   cd lenshine
