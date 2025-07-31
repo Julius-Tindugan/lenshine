@@ -4,7 +4,7 @@ LenShine is a mobile booking application developed for **Shine Spot Studio**, de
 
 ## 🌟 Overview
 
-[cite_start]LenShine addresses the inefficiencies of manual scheduling and fragmented operations in photography studios. [cite: 29] [cite_start]By providing an intuitive platform for automated bookings, the application aims to simplify studio management, minimize errors, and enhance the overall customer experience. [cite: 30]
+LenShine addresses the inefficiencies of manual scheduling and fragmented operations in photography studios. [cite: 29] [cite_start]By providing an intuitive platform for automated bookings, the application aims to simplify studio management, minimize errors, and enhance the overall customer experience. 
 
 ## ✨ App Features
 
@@ -24,20 +24,20 @@ In progress
 
 ### High-Fidelity Wireframes
 
-[cite_start]**Sign-in and Sign-up Flow** [cite: 63]
+**Sign-in and Sign-up Flow** 
 ![Sign-in and Sign-up](https://storage.googleapis.com/maker-media-tool-store/b0d71a17-380d-402a-9642-887498c4d156)
 
-[cite_start]**Main User Flow (Booking, Profile, etc.)** [cite: 94, 95]
+**Main User Flow (Booking, Profile, etc.)** 
 ![User Flow](https://storage.googleapis.com/maker-media-tool-store/a5b4c10c-3bb1-4475-ae90-7d721111d4e0)
 
 ## 🛠️ Technologies Used
 
 ## ✨ Features
-- **Authentication:** Email/password sign-up, login, and password reset via Firebase Auth :contentReference[oaicite:11]{index=11}  
-- **ReCAPTCHA Security:** Bot protection with reCAPTCHA Enterprise :contentReference[oaicite:12]{index=12}  
-- **Booking Flow:** Browse packages, select dates, confirm, and simulate payments :contentReference[oaicite:13]{index=13}  
-- **User Profile:** View and edit profile, session persistence with SharedPreferences :contentReference[oaicite:14]{index=14}  
-- **Navigation:** Custom bottom navigation bar for Home, Map, Chatbot, Profile :contentReference[oaicite:15]{index=15}  
+- **Authentication:** Email/password sign-up, login, and password reset via Firebase Auth   
+- **ReCAPTCHA Security:** Bot protection with reCAPTCHA Enterprise   
+- **Booking Flow:** Browse packages, select dates, confirm, and simulate payments   
+- **User Profile:** View and edit profile, session persistence with SharedPreferences   
+- **Navigation:** Custom bottom navigation bar for Home, Map, Chatbot, Profile   
 - **Receipt:** Dynamically generate and display booking receipts  
 
 ## 🚀 For Developers: Getting Started
@@ -80,7 +80,7 @@ Make sure you have the following installed on your machine:
         ```
 
 5.  **Run the Application**
-    * [cite_start]Connect a physical device or start an emulator. [cite: 170]
+    * Connect a physical device or start an emulator. 
     * Run the app using the following command:
         ```sh
         flutter run
@@ -88,7 +88,7 @@ Make sure you have the following installed on your machine:
 
 ## 📂 Project Structure
 
-[cite_start]The source code is organized into a logical directory structure to maintain clarity and scalability. [cite: 274]
+The source code is organized into a logical directory structure to maintain clarity and scalability. [cite: 274]
 
 lenshine/
 ├── android/            # Android platform-specific files
@@ -106,8 +106,8 @@ lenshine/
 
 This project was developed by a team of dedicated students:
 
-* [cite_start]**Kristine Merylle M. Lalong-isip** - Project Manager/UI Designer [cite: 13]
-* [cite_start]**Julius C. Tindugan** - Full Stack Developer [cite: 14]
+* **Kristine Merylle M. Lalong-isip** - Project Manager/UI Designer 
+* **Julius C. Tindugan** - Full Stack Developer 
 * **Reymark M. Arguelles** - Data Analyst
 
-Under the guidance of **Mr. [cite_start]Melandro V. Floro**, Course Instructor. [cite: 15]
+Under the guidance of **Mr. Melandro V. Floro**, Course Instructor. 
