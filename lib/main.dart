@@ -645,7 +645,6 @@ final selectedAddOnIds = bookingDetails!.addOns.map((addon) => addon.id).toList(
       : pkg_model.PackageItem(
           packageId: -1,
           title: "Christening Package",
-          // *** FIXED: Ensure price is a string to match the model constructor ***
           price: 0.0,
           imageAsset: pkg_model.serviceImages["Christening"] ?? "assets/images/shinelogo.png",
           inclusions: [],
@@ -655,33 +654,37 @@ final selectedAddOnIds = bookingDetails!.addOns.map((addon) => addon.id).toList(
           packageType: "Christening",
         );
 
-  if (bookingPackage != null && bookingLabel == "Self-Shoot") {
-    return BookingScreen(
-      pkg: bookingPackage!,
-      label: bookingLabel,
-      userId: userId ?? 0,
-      userProfile: userProfile,
-      onBack: () => setState(() => bookingPackage = null),
-      onBookNow: (details) => setState(() {
-        bookingDetails = details;
-        showConfirmationScreen = true;
-      }),
-    );
+  if (bookingPackage != null) {
+    // Use BookingScreen for Self-Shoot
+    if (bookingLabel == "Self-Shoot") {
+      return BookingScreen(
+        pkg: bookingPackage!,
+        label: bookingLabel,
+        userId: userId,
+        userProfile: userProfile,
+        onBack: () => setState(() => bookingPackage = null),
+        onBookNow: (details) => setState(() {
+          bookingDetails = details;
+          showConfirmationScreen = true;
+        }),
+      );
+    } 
+    // Use BookingScreenTwo for all other packages
+    else {
+      return BookingScreenTwo(
+        pkg: bookingPackage!,
+        label: bookingLabel,
+        userId: userId,
+        userProfile: userProfile,
+        onBack: () => setState(() => bookingPackage = null),
+        onBookNow: (details) => setState(() {
+          bookingDetails = details;
+          showConfirmationScreen = true;
+        }),
+      );
+    }
   }
-  if (bookingPackage != null &&
-      (bookingLabel == "Party" ||
-       bookingLabel == "Wedding" ||
-       bookingLabel == "Christening")) {
-    return BookingScreenTwo(
-      pkg: bookingPackage!,
-      label: bookingLabel,
-      onBack: () => setState(() => bookingPackage = null),
-      onBookNow: (details) => setState(() {
-        bookingDetails = details;
-        showConfirmationScreen = true;
-      }),
-    );
-  }
+
   if (showSelfShootDetails) {
     return SelfShootDetailsScreen(
       packages: selfShootPackages,
@@ -727,7 +730,7 @@ final selectedAddOnIds = bookingDetails!.addOns.map((addon) => addon.id).toList(
   }
 
   switch (selectedIndex) {
-  case 0:
+    case 0:
         return home_screen.HomeLandingScreen(
           onShowSelfShootDetails: () => setState(() => showSelfShootDetails = true),
           onShowPartyDetails: () => setState(() => showPartyDetails = true),

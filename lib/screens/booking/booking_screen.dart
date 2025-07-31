@@ -133,7 +133,7 @@ class BookingScreenState extends State<BookingScreen> {
         centerTitle: true,
       ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.fromLTRB(16.0, 16.0, 16.0, 120.0), // Add padding for footer
+        padding: const EdgeInsets.fromLTRB(16.0, 16.0, 16.0, 150.0), // Padding for bottom sheet
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -264,8 +264,20 @@ class BookingScreenState extends State<BookingScreen> {
           ],
         ),
       ),
-      bottomSheet: Container(
-        padding: const EdgeInsets.all(16.0),
+      bottomSheet: _buildBookingFooter(),
+    );
+  }
+
+  Widget _buildSectionTitle(String title) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 12.0),
+      child: Text(title, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
+    );
+  }
+
+  Widget _buildBookingFooter() {
+    return Container(
+        padding: const EdgeInsets.all(16.0).copyWith(bottom: 24.0), // Safe area padding
         decoration: BoxDecoration(
           color: Colors.white,
           boxShadow: [
@@ -276,6 +288,10 @@ class BookingScreenState extends State<BookingScreen> {
               offset: const Offset(0, -3),
             ),
           ],
+          borderRadius: const BorderRadius.only(
+            topLeft: Radius.circular(16.0),
+            topRight: Radius.circular(16.0),
+          )
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -306,14 +322,6 @@ class BookingScreenState extends State<BookingScreen> {
             ),
           ],
         ),
-      ),
-    );
-  }
-
-  Widget _buildSectionTitle(String title) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 12.0),
-      child: Text(title, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
-    );
+      );
   }
 }
