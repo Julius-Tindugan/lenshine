@@ -25,7 +25,6 @@ In progress
 ### High-Fidelity Wireframes
 
 **Sign-in and Sign-up Flow**  
-![Sign-in and Sign-up](https://storage.googleapis.com/maker-media-tool-store/b0d71a17-380d-402a-9642-887498c4d156)
 
 **Main User Flow (Booking, Profile, etc.)** 
 ![User Flow](https://storage.googleapis.com/maker-media-tool-store/a5b4c10c-3bb1-4475-ae90-7d721111d4e0)
