@@ -51,8 +51,8 @@ Make sure you have the following installed on your machine:
 * **XAMPP**: To run the local MySQL database for the custom backend.  
 * A **Firebase account** for authentication services.  
 
-### Setup and Installation
-## Method 1
+# Setup and Installation
+## Method #1
 1.  **Clone the Repository**
     ```sh
     git clone [https://github.com/Julius-Tindugan/lenshine.git](https://github.com/Julius-Tindugan/lenshine.git)
@@ -82,14 +82,14 @@ Make sure you have the following installed on your machine:
         ```sh
         flutter run
         ```
-## Method 2
-Download the apk-release on our gdrive [Here is the link](https://drive.google.com/drive/folders/11tCbQTv8Mmh9GT7TjpUh3ow1qJC0lDF-?usp=sharing)
-We used (https://render.com/) for free to host our server online in cloud so that we can operate the app without using xampp localhost.
-We also used (https://railway.com/) for free hosting of our mysql database in cloud.
+## Method #2
+- Download the apk-release on our gdrive [Here is the link](https://drive.google.com/drive/folders/11tCbQTv8Mmh9GT7TjpUh3ow1qJC0lDF-?usp=sharing)
+- We used (https://render.com/) for free to host our server online in cloud so that we can operate the app without using xampp localhost.
+- We also used (https://railway.com/) for free hosting of our mysql database in cloud.
 
-# Download the app package.
+- **Download the app package.**
 
-* The server and database will expire its free trial until August 30, 2025 so don't miss out to try our app.
+- ** Unfortunately, the server and database will expire its free trial until August 30, 2025 so don't miss out to try our app, so the app will not be available. **
 
 ### 📂 Project Structure
 
